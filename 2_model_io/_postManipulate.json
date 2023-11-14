@@ -1,0 +1,17 @@
+[
+  {
+    "selector": "h1",
+    "method": "wrap",
+    "paramator": "<div class=\"coverpage\"></div>"
+  },
+  {
+    "selector": "h2",
+    "method": "wrapWithNextSib",
+    "paramator": "<div class=\"secheader\"></div>"
+  },
+  {
+    "selector": ".codelist",
+    "method": "wrapAll",
+    "paramator": ["pre", "<div class=\"codeno\"></div>"]
+  }
+]

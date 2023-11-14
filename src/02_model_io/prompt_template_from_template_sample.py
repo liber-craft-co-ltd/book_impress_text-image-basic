@@ -1,0 +1,1 @@
+prompt = PromptTemplate.from_template("{product}はどこの会社が開発した製品ですか？")

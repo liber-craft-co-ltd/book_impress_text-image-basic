@@ -1,0 +1,366 @@
+<!DOCTYPE html><html lang="ja"><head>
+    <meta charset="utf-8">
+    <title></title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="_css/main.css">
+  </head>
+  <body>
+    <section class="level1" aria-labelledby="1章-なぜ開発用サーバーが必要なのか">
+      <div class="coverpage"><h1 id="h1_0">1章 なぜ開発用サーバーが必要なのか？</h1></div>
+      <section class="level2" aria-labelledby="webアプリの仕組みについておさらいしよう">
+        <div class="secheader"><h2 id="h2_0">Webアプリの仕組みについておさらいしよう</h2><p>本書はコンテナで簡単にサーバーを調達する方法を解説しますが、サーバーの必要性を理解するためにも、Webアプリの仕組みのおさらいから始めましょう。<br><span class="hashtag">#サーバー／#Webサイトの種類／#サーバーが必要な場面を考える</span></p></div>
+        
+        <section class="level3" aria-labelledby="webはクライアントサーバーシステム">
+          <h3 id="h3_0">Webはクライアント・サーバーシステム</h3>
+          <p>本書を手に取られた皆さんは、何らかの形でWebの制作／開発に携わっていたり、それらを学んでいたりされている方が多いでしょう。静的なHTMLやCSSで制作するWebデザイナーやコーダーの人もいれば、問い合わせフォームのスクリプトを作っている人、WordPressなどのCMS（Contents Management System）をカスタマイズしている人、さらには、SNSなどのWebアプリを開発している人もいるかもしれません。</p>
+          <p>ご存じのようにWebとは、クライアントであるWebブラウザと、そこにコンテンツを供給するWebサーバーで構成されるシステムです。これは<strong>クライアント・サーバーシステム</strong>と呼ばれます。</p>
+          <p><strong>サーバー</strong>は、ユーザー（クライアントのコンピューター）からのリクエストに応じて、何らかのサービスを提供するコンピューターやソフトウェアのことです。これに対して<strong>クライアント</strong>は、サーバーに対してリクエスト（要求）を送信することで、サーバーが提供するコンテンツを利用するコンピューターやソフトウェアを指します。</p>
+          <div class="figure">
+            
+            <svg width="112mm" height="50mm" viewBox="0 0 112 50">
+              <image width="451.556" height="254" xlink:href="img1/zu/c1zu05.jpg" transform="translate(0,0) scale(0.3)"></image>
+            </svg>
+          
+          </div>
+          <p>Webサーバーのほかに、データの保存や検索を行う「データベースサーバー」、メールの送受信を担う「メールサーバー」などがあります。</p>
+          <div class="figure">
+            
+            <img src="img1/zu/c1zu02.jpg?svgimg=30,112,77,-3,">
+            </div>
+          
+        </section>
+        <section class="level3" aria-labelledby="webサイトには大きく2種類の構成がある">
+          <h3 id="h3_1">Webサイトには大きく2種類の構成がある</h3>
+          <p>一口にWebサイトといっても、大きく「静的サイト」と「動的サイト」の2通りに分かれます。本書で扱うコンテナやDockerが関わるのは動的サイトのほうです。おさらいとなるかもしれませんが、両者の違いを説明しておきましょう。</p>
+          <section class="level4" aria-labelledby="静的サイト">
+            <h4 id="h4_0">静的サイト</h4>
+            <p><strong>静的サイト</strong>とは、Webサーバーに保存されているHTMLなどのファイルをそのまま表示するだけのサイトのことです。CSSで装飾していたり、JavaScriptでスライドバナーなどの動く要素を組み込んでいたりしていても、HTML、CSS、JavaScriptの内容が変わることがなければ、静的サイトとなります。そのため、ページの内容を更新したい場合は、サーバーに配置されたファイルを直接書き換える必要があります。このようなサイトを制作する場合は、ローカル（手元のパソコン）にサーバーを用意する必要はありません。Webブラウザのみで検証できます。</p>
+            <div class="figure">
+              
+              <svg width="112mm" height="40mm" viewBox="0 0 112 40">
+                <image width="451.556" height="254" xlink:href="img1/zu/c1zu06.jpg" transform="translate(0,0) scale(0.3)"></image>
+              </svg>
+            
+            </div>
+          </section>
+          <section class="level4" aria-labelledby="動的サイト">
+            <h4 id="h4_1">動的サイト</h4>
+            <p><strong>動的サイト</strong>は、アクセス時の状況やリクエストの内容によって、表示する内容を変えるサイトのことです。たとえばGoogleなどの検索エンジンは、Webブラウザから送られて来た検索キーワードを見て、そのキーワードを含むWebページの一覧を返してきます。これは動的サイトです。そのほか、ログインの有無によって表示が変わる会員制サイト、Amazonのように注文を受けて決済や発送を行うECサイト、TwitterなどのSNSサイトも動的サイトです。サイト全体ではありませんが、お問い合わせフォームなども、フォームから受けたデータをメールで送るので、その部分については動的といえます。</p>
+            <p>動的サイトでは、Webサーバーのほかに、応答を生成するプログラム（独立したアプリサーバーとすることもある）や、データを保存するデータベースサーバーなどが働いています。開発時に動作検証するには、サーバーが必要です。</p>
+            <div class="figure">
+              
+              <svg width="112mm" height="65mm" viewBox="0 0 112 65">
+                <image width="451.556" height="254" xlink:href="img1/zu/c1zu07.jpg" transform="translate(-2,0) scale(0.3)"></image>
+              </svg>
+            
+            </div>
+          </section>
+          <section class="level4" aria-labelledby="同期通信と非同期通信">
+            <h4 id="h4_2">同期通信と非同期通信</h4>
+            <p>少し話が脱線しますが、動的サイトはさらに「同期通信」型と「非同期通信」型に分かれます。<strong>非同期通信</strong>は、かつてはAjaxとも呼ばれ、SPA（Single Page Application）の基本的な仕組みでもあるため、そうと知らずに使っていた人もいるかもしれません。</p>
+            <p><strong>同期通信</strong>とは、古くからある動的サイトの通信方式で、Webブラウザのフォームからデータが送られたあと、Webサーバーから結果のHTMLが送り返されてきて、ページ全体が更新されるものです。</p>
+            <p>それに対して、非同期通信はJavaScriptを使ってWebサーバーとの通信を行います。結果の受信もJavaScriptが行い、ページ全体を更新するのではなく、ページの一部だけを書き換えます。同期通信に比べてユーザーの操作に対する反応が早いため、先進的な動的サイトで採り入れられています。</p>
+          </section>
+        </section>
+        <section class="level3" aria-labelledby="動作検証にサーバーが必要となるタイミング">
+          <h3 id="h3_2">動作検証にサーバーが必要となるタイミング</h3>
+          <p>先に説明したように、静的サイトでは、制作時の動作検証にあたってサーバーは必要ありません。Webブラウザで検証しながら制作を進め、完成したらFTPソフトでWebサーバーのストレージにアップロードすれば済みます。</p>
+          <p>しかし、そのサイトにお問い合わせフォームを付けるとなると、フォームからのデータを受け取ってメールを送信するプログラムを動かすために、サーバーが必要となります。サーバーがなければ、フォームの送信ボタンを押した時点で、エラーが表示されるだけです。</p>
+          <p>WordPressのようなCMSをカスタマイズするケースでも、CMSは動的サイトの一種である<strong>Webアプリ</strong>なので、サーバーが必要です。新たに独自のSNSを開発するようなケースであれば、サーバーが必要なことはいうまでもありませんね。</p>
+          <p>また、検証に必要となるサーバーはWebサーバーだけではありません。たいていの場合、PHPやPython、Javaなどのサーバー側プログラムが動く環境、データベースサーバーなども必要です。</p>
+          <p>このように何らかの動的サイトを開発するためには、まず開発用のサーバーを構築しなければいけません。HTMLやCSS、各種プログラムコードなどを書くのは、そのあとの作業です。</p>
+          <div class="figure">
+            
+            <svg width="112mm" height="62mm" viewBox="0 0 112 62">
+              <image width="451.556" height="254" xlink:href="img1/zu/c1zu01.jpg" transform="translate(0,0) scale(0.27)"></image>
+            </svg>
+          
+          </div>
+        </section>
+        <section class="level3" aria-labelledby="linuxサーバーなら本番環境に近い検証が可能">
+          <h3 id="h3_3">Linuxサーバーなら本番環境に近い検証が可能</h3>
+          <p>WindowsやMacでも、サーバーソフトウェアをインストールすればサーバーとして機能します。代表的なものにXAMPP（ザンプ）があり、これはWebサーバーのApache、データベースサーバーのMariaDB、プログラミング環境のPHPやPerlなどがセットになったものです。1つインストールするだけで、一般的な動的サイトの検証環境がそろう便利なものですが、いくつか問題もあります。</p>
+          <p>1つは、普段使いの<strong>パソコンにインストール済みのソフトウェアが原因で、サーバ－がうまく動作しない</strong>ケースがあることです。よくあるのが、ポート番号（インターネットにおける通信アプリに割り振られる番号）の衝突で起動しなくなるトラブルです。</p>
+          <p>2つ目は、<strong>本番環境とOSが違うために細かなトラブルが起き、場合によっては改修が必要となる</strong>点です。インターネット上のサーバーの多くは<strong>Linux</strong>を使用しています。Linuxがよく使われる理由については次のセクションで解説しますが、LinuxとWindow/Macでは利用できるソフトウェアが異なるので、微妙な違いが生じることは避けられません。微妙といっても、それが原因でWebアプリが動かなくなることもありうる無視できない問題です。</p>
+          <p>そのため、開発用サーバーのOSをLinuxにしておくと、事前にLinuxでの検証が行えるので、本番環境へ反映したときのリスクを減らせます。</p>
+        </section>
+      </section>
+      <section class="level2" aria-labelledby="サーバーにlinuxが使われるのはなぜ">
+        <div class="secheader"><h2 id="h2_1">サーバーにLinuxが使われるのはなぜ？</h2><p>サーバーにLinuxが使われる理由を理解するには、Linuxの特徴を理解することが重要です。<br><span class="hashtag">#Linuxの特徴／#ディストリビューション／#Linuxが使われる理由を追う</span></p></div>
+        
+        <section class="level3" aria-labelledby="サーバーに使われる理由はlinuxの特徴にあり">
+          <h3 id="h3_4">サーバーに使われる理由はLinuxの特徴にあり</h3>
+          <p><strong>Linux（リナックス）</strong>というOSは、1991年に当時フィンランドの学生であったリーナス・トーバルズによって、開発・公開されました。最初は個人的なプロジェクトとして、IBM PC/AT互換機（現在のWindows PC）向けに開発されたLinuxですが、現在では大きく成長を遂げ、Webアプリや組み込みシステム、スーパーコンピューターまで、幅広い用途で利用されています。</p>
+          <p>サーバーにはLinuxがよく使われます。では、なぜサーバーにLinuxがよく使われるのかというと、Linuxには次の特徴があるからです。</p>
+          <section class="level4" aria-labelledby="オープンソースかつ無料で利用できる">
+            <h4 id="h4_3">オープンソースかつ無料で利用できる</h4>
+            <p>Linuxはプログラムのソースコードが公開されている、つまり<strong>オープンソース</strong>なので、利用や改変、再配布が自由を行えます。これは、世界中から多くの技術者が開発に携われること、コミュニティによる修正や機能強化がよく行われていることを表します。コードが公開されているので、何か問題があったときに、自分でコードを調べて対策を講じることが可能なのもメリットの1つです。</p>
+            <p>Linuxは、後述するディストリビューションにもよりますが、基本的には無料で利用できます。サーバー構築の初期費用を抑えられるのに加えて、複数台のサーバーによる構成にも適しています。</p>
+          </section>
+          <section class="level4" aria-labelledby="安定して稼動できる">
+            <h4 id="h4_4">安定して稼動できる</h4>
+            <p>サーバー用OSには「落ちない」ことが求められます。WindowsやMacは個人向けのOSであり、使いやすさや対応機器の多さなど、さまざまな要望に応えるよう設計されています。いずれも優れたOSですが、サーバー専用ではなく、安定性は最優先事項ではありません。それに対してLinuxは、カーネル（OSの中核）にソフトウェアの部品を自由に組み合わせて構築することができます。サーバー用途であれば、GUI（デスクトップ）を取り外し、サーバー専用の構成が取られます。サーバーに不要な要素がない分、ファイルサイズなどの消費リソースも少なくなり、安定性の向上にもつながります。</p>
+          </section>
+          <section class="level4" aria-labelledby="細やかなユーザーやファイルの管理">
+            <h4 id="h4_5">細やかなユーザーやファイルの管理</h4>
+            <p>サーバーコンピューターは不特定多数のユーザーにアクセスされるため、セキュリティも重要です。Linuxにはファイルやディレクトリ（フォルダー）へのアクセス制限を行う、<strong>パーミッション</strong>という設定があり、ファイルごとにどのユーザーがアクセス可能かを設定できます。Webサーバーであれば、外部からアクセスするユーザーは、特定ディレクトリのHTMLなどを読み取ることしかできないよう制限します。また、サイト制作者がFTPにアップロードする場合も、そのユーザーは特定のフォルダーにしか書き込めません。</p>
+          </section>
+        </section>
+        <section class="level3" aria-labelledby="linuxの豊富なディストリビューション">
+          <h3 id="h3_5">Linuxの豊富なディストリビューション</h3>
+          <p>コンテナを使うにあたって、Linuxの<strong>ディストリビューション</strong>についても押さえておきましょう。ディストリビューションとは、OSの中核となるプログラムである<strong>カーネル</strong>に加えて、各種コマンドやライブラリなどをまとめた配布形態のことです。厳密には、「Linux」はOS全体ではなく、カーネルのみを指します。</p>
+          <p>カーネルはアプリの実行管理や資源管理などを担いますが、カーネルだけあっても何もできないので、必要なライブラリやツールを集めた形にして、ユーザーが使いやすいようにしているというわけです。</p>
+          <div class="figure">
+            
+            <img src="img1/zu/c1zu03.jpg?svgimg=30,112,44,,-2">
+            </div>
+          
+          <p>ディストリビューションは、企業向けや教育向けなど、用途に合わせて多数開発されています。また、CUIで操作することを想定したディストリビューションだけではなく、画面で操作できるようにGUIが付属したディストリビューションもあります。1つのディストリビューションでGUI版（デスクトップ版）とCUI版（サーバー版）が公開されていることもあります。さまざまなディストリビューションがあるので、目的に合わせて選べます。主なディストリビューションを紹介しましょう。</p>
+          <section class="level5" aria-labelledby="主なディストリビューション">
+            <h5 id="h5_0">主なディストリビューション</h5>
+            <table>
+              <thead>
+                <tr>
+                  <th>ディストリビューション</th>
+                  <th>概要</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Debian GNU/Linux</td>
+                  <td>コミュニティベースで開発。古くから使われており人気が高い</td>
+                </tr>
+                <tr>
+                  <td>Ubuntu</td>
+                  <td>Debian GNU/Linuxから派生したディストリビューション。デスクトップ用途でも人気が高い</td>
+                </tr>
+                <tr>
+                  <td>Red Hat Enterprise Linux</td>
+                  <td>Red Hat社が企業向けに開発。RHELとも呼ばれる</td>
+                </tr>
+                <tr>
+                  <td>Alpine</td>
+                  <td>シンプルで非常に軽量なので、コンテナでよく使われる</td>
+                </tr>
+              </tbody>
+            </table>
+            <p>一般的にサーバー用途では、軽量なCUIのみのディストリビューションが使われます。</p>
+          </section>
+        </section>
+      </section>
+      <section class="level2" aria-labelledby="気軽にサーバー構築するならコンテナを使おう">
+        <div class="secheader"><h2 id="h2_2">気軽にサーバー構築するなら「コンテナ」を使おう</h2><p>サーバー構築にはいくつか方法があります。その中でもなぜコンテナなのでしょうか。その理由を追っていきましょう。<br><span class="hashtag">#サーバー構築の方法／#コンテナ／#サーバー構築の種類を理解</span></p></div>
+        
+        <section class="level3" aria-labelledby="linuxサーバーを建てるにはさまざまな方法がある">
+          <h3 id="h3_6">Linuxサーバーを建てるにはさまざまな方法がある</h3>
+          <p>Linuxサーバーを建てるには、主に次のような方法があります。</p>
+          <ul>
+            <li>①物理マシンにLinuxをインストールする</li>
+            <li>②仮想マシンを利用する</li>
+            <li>③レンタルサーバーやクラウドを利用する</li>
+            <li>④コンテナを利用する</li>
+          </ul>
+          <p>1つずつ、概要とメリット／デメリットを説明していきましょう。</p>
+          <section class="level4" aria-labelledby="物理マシンにlinuxをインストールする">
+            <h4 id="h4_6">①物理マシンにLinuxをインストールする</h4>
+            <p>1つ目は、Linuxを直接、物理マシンにインストールする方法です。この方法では、物理的なマシンを買ってきて、Linuxをインストールし、Linux上で動作させたいアプリやソフトウェアを順番にインストールしていく、という手順が必要です。LinuxはWindowsパソコンにインストールできますが、専用に新たなマシンを用意するのはハードルが高いですし、その上、未対応のハードウェアもある場合も存在するので、どのWindowsパソコンでも100%動くとは限りません。そのため初心者がLinuxの環境を自力で構築するのは、少々ハードルが高いといえるでしょう。</p>
+          </section>
+          <section class="level4" aria-labelledby="仮想マシンを利用する">
+            <h4 id="h4_7">②仮想マシンを利用する</h4>
+            <p>2つ目は、<strong>仮想マシン</strong>を使う方法です。「仮想マシン」という言葉は、聞いたことがある方も多いでしょう。仮想マシンは、仮想化技術によって作られたコンピューターのことで、<strong>仮想化（かそうか）</strong>は、存在していない機器や資源をあたかも存在しているように見せる技術のことです。仮想マシンは、物理マシンに仮想化ソフトウェアをインストールし、そこにさらにOSをインストールして作成します。</p>
+            <p>仮想マシンは1つの物理マシン上に、複数作成できますし、物理マシン上のOSとは異なるOSを持つ仮想マシンも作れるので、複数のサーバーを建てることがしやすいです。ただし、OSの上にさらにOSを載せるという関係上、仮想マシンは、後述するコンテナに比べるとオーバーヘッドが大きいというデメリットがあります。この点についての詳細は、後述します（P.■■参照）。</p>
+            <p>仮想マシンを作成するソフトウェアで有名なものには、Microsoft社のHyper-VやOracle社のVirtualBoxなどがあります。</p>
+            <div class="figure">
+              <div class="dummy">
+              
+              <svg width="54.187mm" height="35mm" viewBox="0 0 54.187 35">
+                <image width="451.556" height="338.667" xlink:href="img1/c1-1-1.png" transform="translate(0,-3) scale(0.12)"></image>
+              </svg>
+            
+            <p>
+              Hyper-V
+              </p></div>
+              <div class="dummy">
+              
+              <svg width="54.187mm" height="35mm" viewBox="0 0 54.187 35">
+                <image width="451.556" height="338.667" xlink:href="img1/c1-1-2.png" transform="translate(0,-3) scale(0.12)"></image>
+              </svg>
+            
+            <p>
+              VirtualBox
+              </p></div>
+              </div>
+            
+          </section>
+          <section class="level4" aria-labelledby="レンタルサーバーやクラウドを利用する">
+            <h4 id="h4_8">③レンタルサーバーやクラウドを利用する</h4>
+            <p>3つ目は、<strong>レンタルサーバー</strong>を使う方法です。レンタルサーバーとは、利用料金を払うことで、インターネット上の事業者からサーバーを借りられるサービスです。たとえばWordPressのサーバーが欲しい場合、通常はレンタルサーバーを使うことになります。レンタルサーバーには、物理マシンを用意せずとも安定したサーバーをすぐに使い始められるというメリットがあります。また環境構築やメンテナンスは基本的に事業者が行うので、保守の手間を省けるというメリットもあります。しかし、学習や検証したいといったときにレンタルサーバーを使うのは、少々オーバースペックですし、維持費もかかります。また、レンタルサーバーだとPHPやMySQLが特定のバージョンしか使えないなど、環境の選択肢が狭い、というデメリットもあります。</p>
+            <p>レンタルサーバーに似ている方法としては、クラウドで提供されている仮想サーバー構築サービスを使う方法もあります。たとえば、Amazon Web ServicesというクラウドならAmazon EC2、AzureというクラウドならVirtual Machines、Google CloudというクラウドならCompute Engineという仮想サーバーサービスがあります。</p>
+            <div class="figure">
+              <div class="dummy">
+              
+              <svg width="54.187mm" height="35mm" viewBox="0 0 54.187 35">
+                <image width="451.556" height="338.667" xlink:href="img1/c1-1-3.png" transform="translate(0,-3) scale(0.12)"></image>
+              </svg>
+            
+            <p>
+              Amazon EC2
+              </p></div>
+              </div>
+            
+            <div class="figure">
+              <div class="dummy">
+              
+              <svg width="54.187mm" height="35mm" viewBox="0 0 54.187 35">
+                <image width="451.556" height="338.667" xlink:href="img1/c1-1-4.png" transform="translate(0,-3) scale(0.12)"></image>
+              </svg>
+            
+            <p>
+              Virtual Machines
+              </p></div>
+              <div class="dummy">
+              
+              <svg width="54.187mm" height="35mm" viewBox="0 0 54.187 35">
+                <image width="451.556" height="338.667" xlink:href="img1/c1-1-5.png" transform="translate(0,-3) scale(0.12)"></image>
+              </svg>
+            
+            <p>
+              Compute Engine
+              </p></div>
+              </div>
+            
+            <p>クラウドの仮想サーバーは構築が簡単ですし、利用できるOSが豊富で、レンタルサーバーと比べてカスタマイズしやすいです。また、このサーバーも仮想的なものなので、スペックを変更したり自動でオートスケールしたりを柔軟にできることがメリットです。ただし利用には、クラウドの基本的な知識が必要です。また従量課金制なので、使い方によっては、高額になる可能性もあります。</p>
+            <p>このように、サーバーを作るにはいくつか方法があります。それぞれに多くの特徴とメリットがあるのでこれらを使ってももちろん問題ありませんが、本書では、コンテナを使って構築していきます。</p>
+          </section>
+        </section>
+        <section class="level3" aria-labelledby="手軽にサーバー構築するならコンテナが便利">
+          <h3 id="h3_7">手軽にサーバー構築するならコンテナが便利</h3>
+          <p>4つ目は、本書においてメインで解説していく「コンテナ」を使う方法です。詳しくは次章以降で説明していきますが、コンテナは、仮想マシンなどに比べて、OSや各種ソフトウェアを導入する手間が圧倒的に少なく、複数台のサーバーを構築するのもとても簡単です。手軽にサーバー構築したい、サーバーはよくわからないというWebクリエイターや新米エンジニアに、うってつけの方法です。たとえばWordPressのサーバーが欲しい場合、通常はレンタルサーバーを使うことになりますが、コンテナなら、数コマンドの実行ですぐに構築できます。またコンテナなら、WindowsやMac上にも、簡単にLinuxサーバーを用意できます。</p>
+          <div class="figure">
+            
+            <img src="img1/zu/c1zu04.jpg?svgimg=30,112,70,,">
+            </div>
+          
+          <p>もちろん、コンテナを本番環境で動かすにはさまざまな知識が不可欠です。また、コンテナは大規模開発で使うもの、という印象を持っている方もいるかもしれません。しかし、大規模開発でないと使ってはいけない、というわけではなく、「とりあえずサーバーが欲しい」というニーズに、とても適した技術なのです。そのため、ぜひチャレンジしてみましょう。コンテナについては、次章から詳しく解説していきます。</p>
+          <hr class="pagebreak">
+          <div class="point">
+            <h4 id="h4_9">コンテナを学ぶための基礎知識</h4>
+            <p>コンテナを使うにあたって、Webアプリ開発やネットワークに関する基礎的な用語を押さえておくと、学習しやすくなります。そのためここでは、基礎的な用語について紹介しておきましょう。</p>
+            <section class="level5" aria-labelledby="コンテナを学ぶ際に知っておきたい用語">
+              <h5 id="h5_1">コンテナを学ぶ際に知っておきたい用語</h5>
+              <table>
+                <thead>
+                  <tr>
+                    <th>項目</th>
+                    <th>内容</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>IPアドレス</td>
+                    <td>インターネット上の機器に割り当てられる番号。通信先の相手を識別するために使われる</td>
+                  </tr>
+                  <tr>
+                    <td>ゲートウェイ</td>
+                    <td>異なるネットワーク同士を接続するための仕組み</td>
+                  </tr>
+                  <tr>
+                    <td>ポート番号</td>
+                    <td>通信先のアプリやソフトウェアを識別するための番号</td>
+                  </tr>
+                  <tr>
+                    <td>DNS</td>
+                    <td>ドメイン名とIPアドレスの紐づけを担う</td>
+                  </tr>
+                  <tr>
+                    <td>NAT</td>
+                    <td>プライベートIPアドレスとグローバルIPアドレスの変換を担う</td>
+                  </tr>
+                  <tr>
+                    <td>データベース</td>
+                    <td>データの保存や管理、検索を担うソフトウェア</td>
+                  </tr>
+                  <tr>
+                    <td>ライブラリ</td>
+                    <td>汎用的なプログラム・機能をほかの人が使いやすいようにまとめたもの</td>
+                  </tr>
+                  <tr>
+                    <td>Webアプリフレームワーク</td>
+                    <td>Webアプリを開発しやすくするための機能や設定ファイルをまとめたもの</td>
+                  </tr>
+                  <tr>
+                    <td>API</td>
+                    <td>あるサービス上の機能やデータを使う際のインターフェイス（窓口）</td>
+                  </tr>
+                </tbody>
+              </table>
+            </section>
+          </div>
+          <div class="column">
+            <h4 id="h4_10">コラムタイトル</h4>
+            <p>コラムテキスト</p>
+            <div>
+              <hr class="pagebreak">
+            </div>
+          </div>
+        </section>
+        <section class="level3" aria-labelledby="コード例">
+          <h3 id="h3_8">コード例</h3>
+          <section class="level6" aria-labelledby="dockerfile">
+            <h6 id="h6_0" class="codelist">Dockerfile</h6>
+            <div class="codeno"><pre class="language-bash"><code class="language-bash">FROM python:3.10    <span class="token comment codered"> Pythonイメージ</span>
+WORKDIR /code
+ADD requirements.txt /code/
+RUN pip <span class="token function">install</span> -r requirements.txt
+CMD <span class="token punctuation">[</span><span class="token string">"python"</span>, <span class="token string">"manage.py"</span>, <span class="token string">"runserver"</span>, <span class="token string">"0.0.0.0:8000"</span><span class="token punctuation">]</span></code></pre></div>
+
+          </section>
+          <section class="level6" aria-labelledby="composeyaml">
+            <h6 class="codenumber" id="h6_1">compose.yaml</h6>
+            <pre class="language-yml"><code class="language-yml"><span class="codenum-elem">001</span><span class="token key atrule">services</span><span class="token punctuation">:</span>
+<span class="codenum-elem">002</span>  <span class="token key atrule">db</span><span class="token punctuation">:</span>     <span class="token comment codered"> PostgreSQLコンテナ</span>
+<span class="codenum-elem">003</span>    <span class="token key atrule">image</span><span class="token punctuation">:</span> postgres<span class="token punctuation">:</span><span class="token number">14.2</span>
+<span class="codenum-elem">004</span>    <span class="token key atrule">environment</span><span class="token punctuation">:</span>
+<span class="codenum-elem">005</span>      <span class="token key atrule">POSTGRES_DB</span><span class="token punctuation">:</span> testdb
+<span class="codenum-elem">006</span>      <span class="token key atrule">POSTGRES_USER</span><span class="token punctuation">:</span> testuser
+<span class="codenum-elem">007</span>      <span class="token key atrule">POSTGRES_PASSWORD</span><span class="token punctuation">:</span> testpass
+<span class="codenum-elem">008</span>    <span class="token key atrule">volumes</span><span class="token punctuation">:</span>
+<span class="codenum-elem">009</span>      <span class="token punctuation">-</span> db<span class="token punctuation">-</span>data<span class="token punctuation">:</span>/var/lib/postgresql/data
+<span class="codenum-elem">010</span>  <span class="token key atrule">web</span><span class="token punctuation">:</span>      <span class="token comment codered"> Djangoコンテナ</span>
+<span class="codenum-elem">011</span>    <span class="token key atrule">build</span><span class="token punctuation">:</span> .
+<span class="codenum-elem">012</span>    <span class="token key atrule">depends_on</span><span class="token punctuation">:</span>
+<span class="codenum-elem">013</span>      <span class="token punctuation">-</span> db
+<span class="codenum-elem">014</span>    <span class="token key atrule">ports</span><span class="token punctuation">:</span>
+<span class="codenum-elem">015</span>      <span class="token punctuation">-</span> <span class="token string">"8000:8000"</span>     <span class="token comment codered"> ポート番号</span>
+<span class="codenum-elem">016</span>    <span class="token key atrule">volumes</span><span class="token punctuation">:</span>
+<span class="codenum-elem">017</span>      <span class="token punctuation">-</span> .<span class="token punctuation">:</span>/code   <span class="token comment codered"> ボリューム</span>
+<span class="codenum-elem">018</span><span class="token key atrule">volumes</span><span class="token punctuation">:</span>          <span class="token comment codered"> ボリュームの作成</span>
+<span class="codenum-elem">019</span>  db<span class="token punctuation">-</span>data<span class="token punctuation">:</span>
+</code></pre>
+
+            <ul>
+              <li>Ruby<br><a href="https://www.ruby-lang.org/ja/">https://www.ruby-lang.org/ja/</a></li>
+            </ul>
+          </section>
+        </section>
+        <section class="level3" aria-labelledby="手順サンプル">
+          <h3 id="h3_9">手順サンプル</h3>
+          <div class="figure">
+            
+            <svg width="135.467mm" height="50mm" viewBox="0 0 135.467 50">
+              <image width="451.556" height="338.667" xlink:href="img1/c5-7-4.png" transform="translate(0,-9) scale(0.3)"></image>
+            </svg>
+          
+          <ul>
+            <li class="akakome"><span>❸</span>Webブラウザで「<code>http://localhost:8000/</code>」へアクセス</li>
+            <li>
+              ❹Djangoのトップページが表示される
+              </li></ul></div>
+            
+          
+        </section>
+      </section>
+    </section>
+  
+
+</body></html>
