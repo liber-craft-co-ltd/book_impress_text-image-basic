@@ -1,0 +1,1025 @@
+<!DOCTYPE html><html lang="ja"><head>
+    <meta charset="utf-8">
+    <title></title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="_css/main.css">
+  </head>
+  <body>
+    <section class="level1" aria-labelledby="2章-model-io-言語モデルを扱いやすくする">
+      <div class="coverpage"><h1 id="h1_0">2章 Model I/O 言語モデルを扱いやすくする</h1></div>
+      <section class="level2" aria-labelledby="言語モデルを使ったアプリケーションの基本的なしくみを理解する">
+        <div class="secheader"><h2 id="h2_0">言語モデルを使ったアプリケーションの基本的なしくみを理解する</h2><p>
+          <span class="hashtag">#チャットボット／#言語モデル</span><br>LangChainの最も基本的なモジュールであるModel I/Oは言語モデルを呼び出す方法を提供します。
+          具体的にどのようなことができるのかコードを書きつつ見ていきましょう
+        </p></div>
+        
+        <section class="level3" aria-labelledby="言語モデルを呼び出すとは">
+          <h3 id="h3_0">言語モデルを呼び出すとは</h3>
+          <p>改めて「言語モデルを呼び出す」とはどういうことでしょうか？</p>
+          <p>ChatGPTなどWebサービスでは、テキストボックスにメッセージを入力し、送信ボタンをクリックすることで結果が出力されます。</p>
+          <div class="figure">
+            
+            <svg width="83.291mm" height="8.678mm" viewBox="0 0 83.291 8.678">
+              <image width="555.272" height="57.856" xlink:href="img1/chatgpt-message.png" transform="translate(0,0) scale(0.15)"></image>
+            </svg>
+          
+          </div>
+          <p>これはテキストボックスに入力したメッセージから言語モデルを呼び出しているといえるでしょう。</p>
+          <p>このように言語モデルを呼び出す際に、入力となるテキストのことを「プロンプト」と呼びます。今後は言語モデルの入力となるテキストはプロンプトと呼ぶので覚えておきましょう。</p>
+          <p>言語モデルを使ったアプリケーションを作るときにはこの呼び出しをPythonなどで作成したプログラムから行います。前の章で確認しましたが、例としてLangChainを使わないでOpenAIの言語モデルである「gpt-3.5-turbo」を呼び出すコードはどのようなものか見ていきましょう。</p>
+          <p>以下コードは実際に実行する必要はありません。</p>
+          <section class="level6" aria-labelledby="samplepy">
+            <h6 class="codenumber" id="h6_0">sample.py</h6>
+            <pre class="language-python"><code class="language-python"><span class="codenum-elem">001</span><span class="token keyword">import</span> openai  <span class="token comment codered"> OpenAIが用意しているPythonパッケージをインポートする</span>
+<span class="codenum-elem">002</span>
+<span class="codenum-elem">003</span>response <span class="token operator">=</span> openai<span class="token punctuation">.</span>ChatCompletion<span class="token punctuation">.</span>create<span class="token punctuation">(</span>  <span class="token comment codered"> OpenAIのAPIを呼び出すことですことで、言語モデルを呼び出している</span>
+<span class="codenum-elem">004</span>    model<span class="token operator">=</span><span class="token string">"gpt-3.5-turbo"</span><span class="token punctuation">,</span>  <span class="token comment codered"> 呼び出す言語モデルの名前</span>
+<span class="codenum-elem">005</span>    messages<span class="token operator">=</span><span class="token punctuation">[</span>
+<span class="codenum-elem">006</span>        <span class="token punctuation">{</span>
+<span class="codenum-elem">007</span>            <span class="token string">"role"</span><span class="token punctuation">:</span> <span class="token string">"user"</span><span class="token punctuation">,</span>
+<span class="codenum-elem">008</span>            <span class="token string">"content"</span><span class="token punctuation">:</span> <span class="token string">"iPhone8のリリース日を教えて"</span>  <span class="token comment codered"> 入力する文章(プロンプト)</span>
+<span class="codenum-elem">009</span>        <span class="token punctuation">}</span><span class="token punctuation">,</span>
+<span class="codenum-elem">010</span>    <span class="token punctuation">]</span>
+<span class="codenum-elem">011</span><span class="token punctuation">)</span>
+<span class="codenum-elem">012</span><span class="token keyword">print</span><span class="token punctuation">(</span>response<span class="token punctuation">)</span> <span class="token comment codered"> 結果を表示</span>
+<span class="codenum-elem">013</span>
+</code></pre>
+
+            <p>上記のソースコードでは4行目で設定されている「gpt-3.5-turbo」という言語モデルを「iPhone8のリリース日を教えて」というテキスト、「user」というロール（役割）でopenaiが用意しているパッケージを使って呼び出しています。</p>
+            <p>
+              単純なアプリケーションなら上記のようなソースコードで問題ありませんが、実際に言語モデルを使ったアプリケーションを開発する際には問題になることがよくあります。
+              言語モデルを使ったアプリケーションは、すべて手続き型で作成する従来のアプリケーションとは異なり、よい結果を得るためには試行錯誤が必要です。
+            </p>
+            <p>まず、8行目の「iPhone8のリリース日を教えて」というプロンプトです。言語モデルから得られる結果は入力されるプロンプトの書き方で異なります。</p>
+            <p>たとえば「iPhone8のリリース日を教えて」と入力した場合に、「2017/09/22」と出力されるか「2017年9月22日」と出力されるかはわかりません。しかし「iPhone8のリリース日をyyyy/mm/ddという形式で教えて」と入力することで出力される結果を固定し、求める結果を出力させやすくすることが可能です。</p>
+            <p>また、4行目では「gpt-3.5-turbo」とモデル名が指定されていますが、より長いテキストを処理できる「gpt-3.5-turbo-16k」に差し替えたいなら以下のようにモデル名を書き換えるだけで問題ありません。</p>
+          </section>
+          <section class="level6" aria-labelledby="samplepy-1">
+            <h6 class="codenumber" id="h6_1">sample.py</h6>
+            <pre class="language-python"><code class="language-python"><span class="codenum-elem">001</span><span class="token operator">~</span><span class="token operator">~</span><span class="token operator">~</span><span class="token operator">~</span>中略<span class="token operator">~</span><span class="token operator">~</span><span class="token operator">~</span><span class="token operator">~</span>
+<span class="codenum-elem">002</span>    model<span class="token operator">=</span><span class="token string">"gpt-3.5-turbo"</span><span class="token punctuation">,</span>  <span class="token comment codered"> 呼び出す言語モデルの名前</span>
+<span class="codenum-elem">003</span><span class="token operator">~</span><span class="token operator">~</span><span class="token operator">~</span><span class="token operator">~</span>中略<span class="token operator">~</span><span class="token operator">~</span><span class="token operator">~</span><span class="token operator">~</span>
+<span class="codenum-elem">004</span>
+</code></pre>
+
+            <p>しかし言語モデルはOpenAIのGPT-3.5やGPT-4だけではありません。AnthropicのClaude2を使って結果がどのように変わるかみたい場合もあるでしょう。この場合、先ほどのソースコードはOpenAIにしか対応していないので、ほぼすべてのソースコードを書き直す必要があります。</p>
+            <p>このように言語モデルを呼び出すプロンプトを試行錯誤して書き換えたり、モデルを差し替えたりするのはとても手間がかかります。Model I/Oモジュールではこのような手間を減らすための手段を提供しています。また、後に紹介するほかのモジュールでもModel I/Oと組み合わせる必要があるものが多いのでしっかりと学んでいきましょう。</p>
+          </section>
+        </section>
+        <section class="level3" aria-labelledby="model-ioはlangchainで最も基本的なモジュール">
+          <h3 id="h3_1">Model I/OはLangChainで最も基本的なモジュール</h3>
+          <p>Model I/Oモジュールは単体でも使用できますが、実際のアプリケーションを開発する際にはこのモジュールだけですべて作ることは現実的に難しく、ほかのモジュールと組み合わせて使用することが一般的です。たとえば、Promptsモジュールはプロンプトを最適化するために使用されるだけでなく、後に紹介するChainsモジュールなどでも使われており、Language Modelsはほぼすべてのモジュールで使用することになります。</p>
+          <p>提供している機能は単純なものが多いですが、非常に重要なモジュールなのでどのように使うのかしっかり学んでいきましょう。</p>
+        </section>
+        <section class="level3" aria-labelledby="model-ioを構成する3つのサブモジュール">
+          <h3 id="h3_2">Model I/Oを構成する3つのサブモジュール</h3>
+          <p>LangChainのすべてのモジュールはサブモジュールを持っています。Model I/Oモジュールも例外ではなく、3つのサブモジュールから構成されています。ここではざっとどんな機能か見てみましょう。詳しくは後ほど解説します。</p>
+          <section class="level4" aria-labelledby="prompts">
+            <h4 id="h4_0">①Prompts</h4>
+            <p>
+              Promptsモジュールは言語モデルを呼び出すためのプロンプトを構築するのに便利な機能を提供します。用途によってさまざまな孫モジュールが用意されています。たとえばプロンプトと変数を組み合わせたり、大量の例示を効率的にプロンプトに挿入したりできます。
+              さまざまな処理をして、求めるプロンプトを作成しやすくするのが目的です。
+            </p>
+          </section>
+          <section class="level4" aria-labelledby="language-models">
+            <h4 id="h4_1">②Language Models</h4>
+            <p>Language Modelsモジュールは、さまざまな言語モデルを同一のインターフェースで呼び出すための機能を提供します。OpenAIのモデルだけでなく、AnthropicのClaudeなどほかのモデルも同じように呼び出せます。これにより、異なるモデルを試す際に、既存のコードを一から書き直す必要がなくなります。</p>
+          </section>
+          <section class="level4" aria-labelledby="output-parsers">
+            <h4 id="h4_2">③Output parsers</h4>
+            <p>Output parsersモジュールは、言語モデルから得られる出力を解析し、アプリケーションで利用しやすい形に変換するための機能を提供します。出力文字列を整形したり、特定の情報を抽出したりするために使用します。このモジュールにより、出力を構造化したデータとして扱うことが容易になります。</p>
+            <p>ここからは実際にコードを書きつつ各モジュールの動きを見ていきましょう。</p>
+          </section>
+        </section>
+        <section class="level3" aria-labelledby="language-modelsを使ってgpt-35-turboを呼び出す">
+          <h3 id="h3_3">Language Modelsを使ってgpt-3.5-turboを呼び出す</h3>
+          <p>実際にLanguage Modelsモジュールを使ってOpenAIのChatモデルであるgpt-3.5-turboを呼び出してみましょう。</p>
+          <p>
+            まずは1ページの「1-6-1 Pythonの実行環境を整える」で作成したディレクトリへ移動し「02_model_io」という名前で新規ディレクトリを作成しましょう。
+            作成したディレクトリをVSCodeで開いてください。
+          </p>
+          <p>［ファイル］メニューの［新規ファイル］から、「language_models.py」というファイルを作成し、以下の通りに入力してください。</p>
+          <section class="level6" aria-labelledby="language_modelspy">
+            <h6 class="codenumber" id="h6_2">language_models.py</h6>
+            <pre class="language-python"><code class="language-python"><span class="codenum-elem">001</span><span class="token keyword">from</span> langchain<span class="token punctuation">.</span>chat_models <span class="token keyword">import</span> ChatOpenAI  <span class="token comment codered"> モジュールをインポート</span>
+<span class="codenum-elem">002</span><span class="token keyword">from</span> langchain<span class="token punctuation">.</span>schema <span class="token keyword">import</span> HumanMessage  <span class="token comment codered"> ユーザーからのメッセージであるHumanMessageをインポート</span>
+<span class="codenum-elem">003</span>
+<span class="codenum-elem">004</span>chat <span class="token operator">=</span> ChatOpenAI<span class="token punctuation">(</span>  <span class="token comment codered">クライアントを作成しchatへ保存</span>
+<span class="codenum-elem">005</span>    model<span class="token operator">=</span><span class="token string">"gpt-3.5-turbo"</span><span class="token punctuation">,</span>  <span class="token comment codered"> 呼び出すモデルを指定</span>
+<span class="codenum-elem">006</span><span class="token punctuation">)</span>
+<span class="codenum-elem">007</span>
+<span class="codenum-elem">008</span>result <span class="token operator">=</span> chat<span class="token punctuation">(</span> <span class="token comment codered"> 実行する</span>
+<span class="codenum-elem">009</span>    <span class="token punctuation">[</span>
+<span class="codenum-elem">010</span>        HumanMessage<span class="token punctuation">(</span>content<span class="token operator">=</span><span class="token string">"こんにちは！"</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+<span class="codenum-elem">011</span>    <span class="token punctuation">]</span>
+<span class="codenum-elem">012</span><span class="token punctuation">)</span>
+<span class="codenum-elem">013</span><span class="token keyword">print</span><span class="token punctuation">(</span>result<span class="token punctuation">.</span>content<span class="token punctuation">)</span>
+<span class="codenum-elem">014</span>
+</code></pre>
+
+            <p>次にPythonで上記コードを実行します。</p>
+            <pre class="language-bash"><code class="language-bash">python3 language_models.py</code></pre>
+
+            <p>すると、以下のような結果が確認できます。なお、生成結果はまったく同じになるとは限りません。</p>
+            <pre class="language-text"><code class="language-text">こんにちは！私はAIアシスタントです。何かお手伝いできますか？</code></pre>
+
+            <p>コードの要点を見ていきましょう。</p>
+          </section>
+          <section class="level6" aria-labelledby="language_modelspy-1">
+            <h6 id="h6_3" class="codelist">language_models.py</h6>
+            <div class="codeno"><pre class="language-python"><code class="language-python"><span class="token keyword">from</span> langchain<span class="token punctuation">.</span>chat_models <span class="token keyword">import</span> ChatOpenAI  <span class="token comment codered"> モジュールをインポート</span>
+
+<span class="token operator">~</span><span class="token operator">~</span><span class="token operator">~</span>省略<span class="token operator">~</span><span class="token operator">~</span><span class="token operator">~</span>
+
+chat <span class="token operator">=</span> ChatOpenAI<span class="token punctuation">(</span> <span class="token comment codered">クライアントを作成しchatへ保存</span>
+    model<span class="token operator">=</span><span class="token string">"gpt-3.5-turbo"</span><span class="token punctuation">,</span> <span class="token comment codered"> 呼び出すモデルを指定</span>
+<span class="token punctuation">)</span>
+</code></pre></div>
+
+            <p>まず1行目でLanguage Modelsの1つであるChatOpenAIクラスをインポートしています。ChatOpenAIクラスはOpenAIのChatモデルを呼び出す際に使用されます。実際に5行目ではOpenAIのChatモデルの1つであるgpt-3.5-turboを指定しています。</p>
+          </section>
+          <section class="level6" aria-labelledby="language_modelspy-2">
+            <h6 id="h6_4" class="codelist">language_models.py</h6>
+            <div class="codeno"><pre class="language-python"><code class="language-python"><span class="token keyword">from</span> langchain<span class="token punctuation">.</span>schema <span class="token keyword">import</span> HumanMessage  <span class="token comment codered"> ユーザーからのメッセージであるHumanMessageをインポート</span>
+
+<span class="token operator">~</span><span class="token operator">~</span><span class="token operator">~</span>省略<span class="token operator">~</span><span class="token operator">~</span><span class="token operator">~</span>
+
+result <span class="token operator">=</span> chat<span class="token punctuation">(</span> <span class="token comment codered"> 実行する</span>
+    <span class="token punctuation">[</span>
+        HumanMessage<span class="token punctuation">(</span>content<span class="token operator">=</span><span class="token string">"こんにちは！"</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+    <span class="token punctuation">]</span>
+<span class="token punctuation">)</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span>
+    result<span class="token punctuation">.</span>content
+<span class="token punctuation">)</span></code></pre></div>
+
+            <p>10行目ではHumanMessageをcontentに言語モデルへ送信したい内容を入力し初期化しています。HumanMessageは人間からのメッセージあることを表しており、contentはその内容を表します。これらのHumanMessageを使って11行目で言語モデルを呼び出すことで、入力されたメッセージをもとに言語モデルを呼び出せます。</p>
+          </section>
+          <section class="level4" aria-labelledby="aimessageを使って言語モデルからの返答を表すことができる">
+            <h4 id="h4_3">AIMessageを使って言語モデルからの返答を表すことができる</h4>
+            <p>
+              LangChainでは対話形式のやりとりを表現するために、AIMessageも用意されています。たとえば、最初に「茶碗蒸しの作り方を教えて」と問い合わると言語モデルからレシピが返されるはずです。
+              このレシピを英語に翻訳したいときには「英語に翻訳して」と指示することで英語に翻訳されたレシピを受け取ることができます。このような会話の流れをAIMessageを使ってどのように対話形式のやりとりを表現するのか見てみましょう。
+            </p>
+            <p>以下コードは説明を意図したもので実際に実行する必要はありません。</p>
+            <section class="level6" aria-labelledby="language_models_ai_message_samplepy">
+              <h6 class="codenumber" id="h6_5">language_models_ai_message_sample.py</h6>
+              <pre class="language-python"><code class="language-python"><span class="codenum-elem">001</span>result <span class="token operator">=</span> chat<span class="token punctuation">(</span> <span class="token comment codered"> 実行する</span>
+<span class="codenum-elem">002</span>    <span class="token punctuation">[</span>
+<span class="codenum-elem">003</span>        HumanMessage<span class="token punctuation">(</span>content<span class="token operator">=</span><span class="token string">"茶碗蒸しの作り方を教えて"</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+<span class="codenum-elem">004</span>        AIMessage<span class="token punctuation">(</span>content<span class="token operator">=</span><span class="token string">"{ChatModelからの返答である茶碗蒸しの作り方}"</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+<span class="codenum-elem">005</span>        HumanMessage<span class="token punctuation">(</span>content<span class="token operator">=</span><span class="token string">"英語に翻訳して"</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+<span class="codenum-elem">006</span>    <span class="token punctuation">]</span>
+<span class="codenum-elem">007</span><span class="token punctuation">)</span>
+<span class="codenum-elem">008</span>
+</code></pre>
+
+              <p>このようにChatModelではHumanMessage、AIMessageを使用することで言語モデルとの対話形式のやりとりを表現できます。</p>
+              <p>Language Modelsのみでこのように過去の返答を踏まえた解答させるには都度ソースコードの書き換えが必要になり、非常に面倒で、対話を用いたアプリケーション開発は難しいでしょう。LangChainではこのような対話をサポートするためのMemoryというモジュールが用意されています（2ページで解説）。</p>
+            </section>
+          </section>
+          <section class="level4" aria-labelledby="systemmessageを使って言語モデルの人格や設定を定義する">
+            <h4 id="h4_4">SystemMessageを使って言語モデルの人格や設定を定義する</h4>
+            <p>また、こういった対話機能をカスタマイズできるSystemMessageも用意されています。これは対話を表現するものではなく、言語への直接的な指示を書くことができます。たとえば言語モデルの人格や設定などを入力することで、返答の文体をよりフランクなものに変更できます。</p>
+            <p>SystemMessageを設定して返答の文体などを変更する方法を見てみましょう。以下コードは説明を意図したもので実際に実行する必要はありません。</p>
+            <section class="level6" aria-labelledby="language_models_system_message_samplepy">
+              <h6 class="codenumber" id="h6_6">language_models_system_message_sample.py</h6>
+              <pre class="language-python"><code class="language-python"><span class="codenum-elem">001</span>result <span class="token operator">=</span> chat<span class="token punctuation">(</span>
+<span class="codenum-elem">002</span>    <span class="token punctuation">[</span>
+<span class="codenum-elem">003</span>        SystemMessage<span class="token punctuation">(</span>content<span class="token operator">=</span><span class="token string">"あなたは親しい友人です。返答は敬語を使わず、フランクに会話してください。"</span><span class="token punctuation">)</span><span class="token punctuation">,</span>  <span class="token comment codered"> システムメッセージを使用して設定を追加</span>
+<span class="codenum-elem">004</span>        HumanMessage<span class="token punctuation">(</span>content<span class="token operator">=</span><span class="token string">"こんにちは！"</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+<span class="codenum-elem">005</span>    <span class="token punctuation">]</span>
+<span class="codenum-elem">006</span><span class="token punctuation">)</span>
+<span class="codenum-elem">007</span>
+</code></pre>
+
+              <p>これを実行すると以下のような結果が返ってきます。</p>
+              <pre class="language-text"><code class="language-text">やぁ、こんにちは！元気してる？</code></pre>
+
+              <p>SystemMessageに入力した指示の通りに、文体をフランクなものに変更できました。</p>
+              <div class="point">
+                <h4 id="h4_5">ChatModelは差し替えることができる</h4>Language Modelsは共通のインターフェイスを持ち、簡単に差し替えることができると説明しました。今回はOpenAIの対話形式の言語モデルを読み込むための「ChatOpenAI」を使用しましたが、これをOpenAIではなく、Anthropicが開発した言語モデルに差し替える場合にはどのように変更するのか見てみましょう。
+                <p>Anthropicの言語モデルをAPI経由で使用するには、執筆時点では申請と審査が必要になりますが、ここでは一例として紹介します。</p>
+                <p>Anthropicが開発する対話形式の言語モデルは「ChatAnthropic」で使用できます。つまり先ほどのコードを以下のように編集するだけで言語モデルだけを差し替えることが可能になります。</p>
+              </div>
+            </section>
+            <section class="level6" aria-labelledby="language_models_chat_anthropic_samplepy">
+              <h6 id="h6_7" class="codelist">language_models_chat_anthropic_sample.py</h6>
+              <div class="codeno"><pre class="language-python"><code class="language-python"><span class="token keyword">from</span> langchain<span class="token punctuation">.</span>chat_models <span class="token keyword">import</span> ChatAnthropic  <span class="token comment codered"> AnthropicのChatModelをインポートするように変更</span>
+
+<span class="token operator">~</span><span class="token operator">~</span><span class="token operator">~</span>省略<span class="token operator">~</span><span class="token operator">~</span><span class="token operator">~</span>
+
+chat <span class="token operator">=</span> ChatAnthropic<span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token comment codered"> ChatAnthropicのLanguage Modelsを初期化</span>
+<span class="token operator">~</span><span class="token operator">~</span><span class="token operator">~</span>省略<span class="token operator">~</span><span class="token operator">~</span><span class="token operator">~</span></code></pre></div>
+
+              <p>このように同じ「ChatModel」であれば簡単に対話形式の言語モデルの差し替えを行うことが可能になります。</p>
+            </section>
+          </section>
+        </section>
+        <section class="level3" aria-labelledby="変数をプロンプトに展開する">
+          <h3 id="h3_4">変数をプロンプトに展開する</h3>
+          <p>言語モデルをプログラムから呼び出す場合、用意してあるプロンプトとPythonからの入力を組み合わせることがよくあります。</p>
+          <p>Promptsモジュールの最も基本的なモジュールであるPromptTemplateを使ってPythonからの入力とプロンプトを組み合わせてみましょう。</p>
+          <p>VSCodeの［ファイル］メニューの［新しいテキストファイル］から「prompt.py」というファイルを作成し、以下の通りに入力してください。</p>
+          <section class="level6" aria-labelledby="promptpy">
+            <h6 class="codenumber" id="h6_8">prompt.py</h6>
+            <pre class="language-python"><code class="language-python"><span class="codenum-elem">001</span><span class="token keyword">from</span> langchain <span class="token keyword">import</span> PromptTemplate  <span class="token comment codered"> PromptTemplateをインポート</span>
+<span class="codenum-elem">002</span>
+<span class="codenum-elem">003</span>prompt <span class="token operator">=</span> PromptTemplate<span class="token punctuation">(</span>  <span class="token comment codered"> PromptTemplateを初期化する</span>
+<span class="codenum-elem">004</span>    template<span class="token operator">=</span><span class="token string">"{product}はどこの会社が開発した製品ですか？"</span><span class="token punctuation">,</span>  <span class="token comment codered"> {product}という変数を含むプロンプトを作成する</span>
+<span class="codenum-elem">005</span>    input_variables<span class="token operator">=</span><span class="token punctuation">[</span>
+<span class="codenum-elem">006</span>        <span class="token string">"product"</span>  <span class="token comment codered"> productに入力する変数を指定する</span>
+<span class="codenum-elem">007</span>    <span class="token punctuation">]</span>
+<span class="codenum-elem">008</span><span class="token punctuation">)</span>
+<span class="codenum-elem">009</span>
+<span class="codenum-elem">010</span><span class="token keyword">print</span><span class="token punctuation">(</span>prompt<span class="token punctuation">.</span><span class="token builtin">format</span><span class="token punctuation">(</span>product<span class="token operator">=</span><span class="token string">"iPhone"</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+<span class="codenum-elem">011</span><span class="token keyword">print</span><span class="token punctuation">(</span>prompt<span class="token punctuation">.</span><span class="token builtin">format</span><span class="token punctuation">(</span>product<span class="token operator">=</span><span class="token string">"Xperia"</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+</code></pre>
+
+            <p>次にVSCodeの［ターミナル］メニューから［新しいターミナル］を選択してターミナルを開き、Pythonで上記コードを実行します。</p>
+            <pre class="language-bash"><code class="language-bash">python3 prompt.py</code></pre>
+
+            <p>すると、以下のような結果が確認できます。</p>
+            <pre class="language-text"><code class="language-text">iPhoneはどこの会社が開発した製品ですか？
+Xperiaはどこの会社が開発した製品ですか？
+</code></pre>
+
+            <p>PromptTemplateを使ってプロンプトを生成できることが確認できました。</p>
+            <p>このPromptTemplateを使用するためには以下2つのステップが必要です。</p>
+            <ol>
+              <li>PromptTemplateの準備</li>
+              <li>準備したPromptTemplateを使⽤する</li>
+            </ol>
+            <p>まずは、PromptTemplateの準備です。3行目でPromptTemplateを初期化してtemplateとinput_variablesを引数に入れ、結果をprompt変数に保存しました。</p>
+          </section>
+          <section class="level6" aria-labelledby="promptpy-1">
+            <h6 id="h6_9" class="codelist">prompt.py</h6>
+            <div class="codeno"><pre class="language-python"><code class="language-python"><span class="token operator">~</span><span class="token operator">~</span>省略<span class="token operator">~</span><span class="token operator">~</span>
+prompt <span class="token operator">=</span> PromptTemplate<span class="token punctuation">(</span>  <span class="token comment codered"> PromptTemplateを初期化する</span>
+    template<span class="token operator">=</span><span class="token string">"{product}はどこの会社が開発した製品ですか？"</span><span class="token punctuation">,</span>  <span class="token comment codered"> {product}という変数を含むプロンプトを作成する</span>
+    input_variables<span class="token operator">=</span><span class="token punctuation">[</span>
+        <span class="token string">"product"</span>  <span class="token comment codered"> productに入力する変数を指定する</span>
+    <span class="token punctuation">]</span>
+<span class="token punctuation">)</span>
+<span class="token operator">~</span><span class="token operator">~</span>省略<span class="token operator">~</span><span class="token operator">~</span></code></pre></div>
+
+            <p>
+              templateにはもととなるテンプレートをテキストで入力します。「{product}はどこの会社が開発した製品ですか？」のように{}で置き換えたい名前を囲みます。
+              そしてinput_variablesには置き換えたい名前を配列で入力します。テンプレートには{product}という文字列があり、これを後で置き換えたいことを意図しているので、ここでは"product"を配列として入力しています。
+            </p>
+            <p>以上で準備は完了です。次に準備したPromptTemplateを使用する方法を見ていきましょう。</p>
+          </section>
+          <section class="level6" aria-labelledby="promptpy-2">
+            <h6 class="codenumber" id="h6_10">prompt.py</h6>
+            <pre class="language-python"><code class="language-python"><span class="codenum-elem">001</span><span class="token operator">~</span><span class="token operator">~</span>省略<span class="token operator">~</span><span class="token operator">~</span>
+<span class="codenum-elem">002</span><span class="token keyword">print</span><span class="token punctuation">(</span>prompt<span class="token punctuation">.</span><span class="token builtin">format</span><span class="token punctuation">(</span>product<span class="token operator">=</span><span class="token string">"iPhone"</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+<span class="codenum-elem">003</span><span class="token keyword">print</span><span class="token punctuation">(</span>prompt<span class="token punctuation">.</span><span class="token builtin">format</span><span class="token punctuation">(</span>product<span class="token operator">=</span><span class="token string">"Xperia"</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+</code></pre>
+
+            <p>10行目ではprompt.format(product="iPhone")を実行しています。ここではpromptを使用し、formatメソッド実際のプロンプトを生成、つまり、テキストを生成しています。結果、以下のようなプロンプトを生成できました。</p>
+            <pre class="language-text"><code class="language-text">iPhoneはどこの会社が開発した製品ですか？</code></pre>
+
+            <p>11行目ではこのPromptTemplateを使うための名前として"product"を入力しています。そしてこの結果は、以下のように先ほどとは違うプロンプトが生成できました。</p>
+            <pre class="language-text"><code class="language-text">Xperiaはどこの会社が開発した製品ですか？</code></pre>
+
+            <p>PromptTemplateでプロンプトを生成できることを確認できました。</p>
+          </section>
+        </section>
+        <section class="level3" aria-labelledby="prompttemplateに用意されているその他の機能">
+          <h3 id="h3_5">PromptTemplateに用意されているその他の機能</h3>
+          <p>PromptTemplateには、さまざまな便利な機能が用意されています。その中の1つ、バリデーション機能を紹介します。</p>
+          <p>PromptTemplateは、formatメソッドを使ってプロンプトを作成する際、必要な入力が正しく受け取られているかどうかをチェックします。</p>
+          <p>例えば、今回紹介したコードでは以下のような形でproductを渡していました。</p>
+          <pre class="language-text"><code class="language-text">prompt.format(product="Xperia")</code></pre>
+
+          <p>では、formatを呼び出すときに以下のようにproductを入力しない場合はどのような動きになるでしょうか。</p>
+          <section class="level6" aria-labelledby="promptpy-3">
+            <h6 id="h6_11" class="codelist">prompt.py</h6>
+            <div class="codeno"><pre class="language-python"><code class="language-python"><span class="token operator">~</span><span class="token operator">~</span>省略<span class="token operator">~</span><span class="token operator">~</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span>prompt<span class="token punctuation">.</span><span class="token builtin">format</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span></code></pre></div>
+
+            <p>すると以下のようなエラーが表示されます。</p>
+            <pre class="language-text"><code class="language-text">KeyError: 'product'</code></pre>
+
+            <p>これはproductがinput_variablesで必要な入力として定義されているにもかかわらず、入力せずにプロンプトを生成しようとしていることで発生しています。</p>
+            <p>プロンプトは結局のところはただのテキストです。ただのテキストである以上、どのような方法でも作成できてしまいます。しかし、実際システムに組み込む際にはプロンプトも強い制約をもって生成することにより、安定したアプリケーションを作成できるようになります。</p>
+          </section>
+        </section>
+        <section class="level3" aria-labelledby="language-modelsとprompttemplateを組み合わせる">
+          <h3 id="h3_6">Language ModelsとPromptTemplateを組み合わせる</h3>
+          <p>次は3ページの「Language Modelsを使ってgpt-3.5-turboを呼び出す」で作成した「Language Models」を呼び出すコードとPromptTemplateを組み合わせてみましょう。［ファイル］メニューの［新しいテキストファイル］から、「prompt_and_language_model.py」というファイルを作成し、以下の通りに入力してください。</p>
+          <section class="level6" aria-labelledby="prompt_and_language_modelpy">
+            <h6 class="codenumber" id="h6_12">prompt_and_language_model.py</h6>
+            <pre class="language-python"><code class="language-python"><span class="codenum-elem">001</span><span class="token keyword">from</span> langchain <span class="token keyword">import</span> PromptTemplate
+<span class="codenum-elem">002</span><span class="token keyword">from</span> langchain<span class="token punctuation">.</span>chat_models <span class="token keyword">import</span> ChatOpenAI
+<span class="codenum-elem">003</span><span class="token keyword">from</span> langchain<span class="token punctuation">.</span>schema <span class="token keyword">import</span> HumanMessage
+<span class="codenum-elem">004</span>
+<span class="codenum-elem">005</span>chat <span class="token operator">=</span> ChatOpenAI<span class="token punctuation">(</span>  <span class="token comment codered">クライアントを作成しchatへ保存</span>
+<span class="codenum-elem">006</span>    model<span class="token operator">=</span><span class="token string">"gpt-3.5-turbo"</span><span class="token punctuation">,</span>  <span class="token comment codered"> 呼び出すモデルを指定</span>
+<span class="codenum-elem">007</span><span class="token punctuation">)</span>
+<span class="codenum-elem">008</span>
+<span class="codenum-elem">009</span>prompt <span class="token operator">=</span> PromptTemplate<span class="token punctuation">(</span>  <span class="token comment codered"> PromptTemplateを作成する</span>
+<span class="codenum-elem">010</span>    template<span class="token operator">=</span><span class="token string">"{product}はどこの会社が開発した製品ですか？"</span><span class="token punctuation">,</span>  <span class="token comment codered"> {product}という変数を含むプロンプトを作成する</span>
+<span class="codenum-elem">011</span>    input_variables<span class="token operator">=</span><span class="token punctuation">[</span>
+<span class="codenum-elem">012</span>        <span class="token string">"product"</span>  <span class="token comment codered"> productに入力する変数を指定する</span>
+<span class="codenum-elem">013</span>    <span class="token punctuation">]</span>
+<span class="codenum-elem">014</span><span class="token punctuation">)</span>
+<span class="codenum-elem">015</span>
+<span class="codenum-elem">016</span>result <span class="token operator">=</span> chat<span class="token punctuation">(</span> <span class="token comment codered"> 実行する</span>
+<span class="codenum-elem">017</span>    <span class="token punctuation">[</span>
+<span class="codenum-elem">018</span>        HumanMessage<span class="token punctuation">(</span>content<span class="token operator">=</span>prompt<span class="token punctuation">.</span><span class="token builtin">format</span><span class="token punctuation">(</span>product<span class="token operator">=</span><span class="token string">"iPhone"</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+<span class="codenum-elem">019</span>    <span class="token punctuation">]</span>
+<span class="codenum-elem">020</span><span class="token punctuation">)</span>
+<span class="codenum-elem">021</span><span class="token keyword">print</span><span class="token punctuation">(</span>result<span class="token punctuation">.</span>content<span class="token punctuation">)</span>
+<span class="codenum-elem">022</span>
+</code></pre>
+
+            <p>今回のコードでは、PromptTemplateで生成したプロンプトをLanguage Modelsを使って呼び出しています。</p>
+            <p>次にPythonで上記コードを実行します。</p>
+            <pre class="language-bash"><code class="language-bash">python3 prompt_and_language_model.py </code></pre>
+
+            <p>すると以下のような結果を確認できます。</p>
+            <pre class="language-text"><code class="language-text">iPhoneはアメリカのApple Inc.（アップル）が開発した製品です。</code></pre>
+
+            <p>それでは今回作成したコードを詳しく見ていきましょう。</p>
+            <p>まずは、5行目でOpenAIの「Chat」モデルである「gpt-3.5-turbo」をChatOpenAIで初期化し、次に9行目で先ほどと同じようにPromptTemplateを初期化しています。</p>
+            <p>18行目では、prompt.formatをproductにiPhoneを入力して実行することでプロンプトを作成しています。16行目で実行し、21行目で結果を表示しています。</p>
+            <p>これで、PromptTemplateを使って変数とプロンプトを組み合わせて実行できることを確認できました。このようにLangChainでは複数存在するモジュールを作成しつつアプリケーションを作成していきます。</p>
+          </section>
+          <section class="level4" aria-labelledby="prompttemplateの初期化方法の種類">
+            <h4 id="h4_6">PromptTemplateの初期化方法の種類</h4>
+            <p>本書ではPromptTemplateを初期化する際には以下のようにクラスを初期化する方法をとっています。</p>
+            <section class="level6" aria-labelledby="prompt_and_language_modelpy-1">
+              <h6 class="codenumber" id="h6_13">prompt_and_language_model.py</h6>
+              <pre class="language-python"><code class="language-python"><span class="codenum-elem">001</span>prompt <span class="token operator">=</span> PromptTemplate<span class="token punctuation">(</span>  <span class="token comment codered"> PromptTemplateを作成する</span>
+<span class="codenum-elem">002</span>    template<span class="token operator">=</span><span class="token string">"{product}はどこの会社が開発した製品ですか？"</span><span class="token punctuation">,</span>  <span class="token comment codered"> {product}という変数を含むプロンプトを作成する</span>
+<span class="codenum-elem">003</span>    input_variables<span class="token operator">=</span><span class="token punctuation">[</span>
+<span class="codenum-elem">004</span>        <span class="token string">"product"</span>  <span class="token comment codered"> productに入力する変数を指定する</span>
+<span class="codenum-elem">005</span>    <span class="token punctuation">]</span>
+<span class="codenum-elem">006</span><span class="token punctuation">)</span>
+</code></pre>
+
+              <p>PromptTemplateは上記以外にもいくつか初期化する方法が存在します。</p>
+              <p>たとえば、以下のようにinput_variablesを直接指定せず、テンプレートから直接初期化することもできます。</p>
+            </section>
+            <section class="level6" aria-labelledby="prompt_template_from_template_samplepy">
+              <h6 class="codenumber" id="h6_14">prompt_template_from_template_sample.py</h6>
+              <pre class="language-python"><code class="language-python"><span class="codenum-elem">001</span>prompt <span class="token operator">=</span> PromptTemplate<span class="token punctuation">.</span>from_template<span class="token punctuation">(</span><span class="token string">"{product}はどこの会社が開発した製品ですか？"</span><span class="token punctuation">)</span>
+</code></pre>
+
+              <p>単にPromptTemplateを初期化するだけならこのほうが短く書けますが、本書ではわかりやすさのためにinput_variablesも指定する書き方に統一しています。</p>
+              <p>また、jsonファイルに保存したプロンプトを読み出す方法も存在します。以下のように「prompt_template_from_template_save_sample.py」を作成して、Pythonで実行します。</p>
+            </section>
+            <section class="level6" aria-labelledby="prompt_template_from_template_save_samplepy">
+              <h6 class="codenumber" id="h6_15">prompt_template_from_template_save_sample.py</h6>
+              <pre class="language-python"><code class="language-python"><span class="codenum-elem">001</span><span class="token keyword">from</span> langchain<span class="token punctuation">.</span>prompts <span class="token keyword">import</span> PromptTemplate
+<span class="codenum-elem">002</span>
+<span class="codenum-elem">003</span>prompt <span class="token operator">=</span> PromptTemplate<span class="token punctuation">(</span>template<span class="token operator">=</span><span class="token string">"{product}はどこの会社が開発した製品ですか？"</span><span class="token punctuation">,</span> input_variables<span class="token operator">=</span><span class="token punctuation">[</span><span class="token string">"product"</span><span class="token punctuation">]</span><span class="token punctuation">)</span>
+<span class="codenum-elem">004</span>prompt_json <span class="token operator">=</span> prompt<span class="token punctuation">.</span>save<span class="token punctuation">(</span><span class="token string">"prompt.json"</span><span class="token punctuation">)</span> <span class="token comment codered"> PromptTemplateをJSONに変換する</span>
+<span class="codenum-elem">005</span>
+</code></pre>
+
+              <p>すると以下のようなJSONが作成されます。</p>
+              <pre class="language-text"><code class="language-text">{
+    "input_variables": [
+        "product"
+    ],
+    "output_parser": null,
+    "partial_variables": {},
+    "template": "{product}\u306f\u3069\u3053\u306e\u4f1a\u793e\u304c\u958b\u767a\u3057\u305f\u88fd\u54c1\u3067\u3059\u304b\uff1f",
+    "template_format": "f-string",
+    "validate_template": true,
+    "_type": "prompt"
+}</code></pre>
+
+              <p>このJSONを以下のようにファイルから読み出すことでPromptTemplateを作成できます。</p>
+            </section>
+            <section class="level6" aria-labelledby="prompt_template_from_template_load_samplepy">
+              <h6 class="codenumber" id="h6_16">prompt_template_from_template_load_sample.py</h6>
+              <pre class="language-python"><code class="language-python"><span class="codenum-elem">001</span><span class="token keyword">from</span> langchain<span class="token punctuation">.</span>prompts <span class="token keyword">import</span> load_prompt
+<span class="codenum-elem">002</span>
+<span class="codenum-elem">003</span>loaded_prompt <span class="token operator">=</span> load_prompt<span class="token punctuation">(</span><span class="token string">"prompt.json"</span><span class="token punctuation">)</span> <span class="token comment codered"> JSONからPromptTemplateを読み込む</span>
+<span class="codenum-elem">004</span>
+<span class="codenum-elem">005</span><span class="token keyword">print</span><span class="token punctuation">(</span>loaded_prompt<span class="token punctuation">.</span><span class="token builtin">format</span><span class="token punctuation">(</span>product<span class="token operator">=</span><span class="token string">"iPhone"</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token comment codered"> PromptTemplateを使って文章を生成する</span>
+<span class="codenum-elem">006</span>
+</code></pre>
+
+              <p>このようにPromptTemplateをjsonファイルとして保存することで、さまざまな活用ができます。</p>
+              <p>たとえば、saveメソッドでユーザーが操作するアプリケーションのプロンプトをあらかじめjsonファイルに保存しておき、保存されたjsonファイルを管理者のみが操作できる管理画面で更新し、上書きできるようにすれば、ソースコードの編集をすることなくプロンプトの編集が可能になります。</p>
+              <p>このようにPromptTemplateはさまざまな方法で生成できます。目的にあった方法で生成しましょう。</p>
+            </section>
+          </section>
+        </section>
+        <section class="level3" aria-labelledby="リスト形式で結果を受け取る">
+          <h3 id="h3_7">リスト形式で結果を受け取る</h3>
+          <p>
+            最後にOutput Parsersを使って言語モデルから受け取った結果を構造化してみましょう。
+            言語モデルを呼び出して得られる結果はテキスト形式になります。しかし、言語モデルの呼び出し結果をプログラムから使いたい場合にはリスト形式などで構造化されたデータを受け取りたい場合があります。
+            Output Parserはこの言語モデルの呼び出し結果の構造化を行います。
+          </p>
+          <p>では、prompt_and_language_model.pyをもとに結果をリスト形式で受け取ってみましょう。［ファイル］メニューの［新しいテキストファイル］から、「list_output_parser.py」というファイルを作成し以下を入力してください。</p>
+          <section class="level6" aria-labelledby="list_output_parserpy">
+            <h6 class="codenumber" id="h6_17">list_output_parser.py</h6>
+            <pre class="language-python"><code class="language-python"><span class="codenum-elem">001</span><span class="token keyword">from</span> langchain<span class="token punctuation">.</span>chat_models <span class="token keyword">import</span> ChatOpenAI
+<span class="codenum-elem">002</span><span class="token keyword">from</span> langchain<span class="token punctuation">.</span>output_parsers <span class="token keyword">import</span> \
+<span class="codenum-elem">003</span>    CommaSeparatedListOutputParser  <span class="token comment codered"> Output ParserであるCommaSeparatedListOutputParserをインポート</span>
+<span class="codenum-elem">004</span><span class="token keyword">from</span> langchain<span class="token punctuation">.</span>schema <span class="token keyword">import</span> HumanMessage
+<span class="codenum-elem">005</span>
+<span class="codenum-elem">006</span>output_parser <span class="token operator">=</span> CommaSeparatedListOutputParser<span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token comment codered"> CommaSeparatedListOutputParserを初期化</span>
+<span class="codenum-elem">007</span>
+<span class="codenum-elem">008</span>chat <span class="token operator">=</span> ChatOpenAI<span class="token punctuation">(</span>model<span class="token operator">=</span><span class="token string">"gpt-3.5-turbo"</span><span class="token punctuation">,</span> <span class="token punctuation">)</span>
+<span class="codenum-elem">009</span>
+<span class="codenum-elem">010</span>result <span class="token operator">=</span> chat<span class="token punctuation">(</span>
+<span class="codenum-elem">011</span>    <span class="token punctuation">[</span>
+<span class="codenum-elem">012</span>        HumanMessage<span class="token punctuation">(</span>content<span class="token operator">=</span><span class="token string">"Appleが開発した代表的な製品を3つ教えてください"</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+<span class="codenum-elem">013</span>        HumanMessage<span class="token punctuation">(</span>content<span class="token operator">=</span>output_parser<span class="token punctuation">.</span>get_format_instructions<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">,</span>  <span class="token comment codered"> output_parser.get_format_instructions()を実行し、言語モデルへの指示を追加する</span>
+<span class="codenum-elem">014</span>    <span class="token punctuation">]</span>
+<span class="codenum-elem">015</span><span class="token punctuation">)</span>
+<span class="codenum-elem">016</span>
+<span class="codenum-elem">017</span>output <span class="token operator">=</span> output_parser<span class="token punctuation">.</span>parse<span class="token punctuation">(</span>result<span class="token punctuation">.</span>content<span class="token punctuation">)</span> <span class="token comment codered"> 出力結果を解析してリスト形式に変換する</span>
+<span class="codenum-elem">018</span>
+<span class="codenum-elem">019</span><span class="token keyword">for</span> item <span class="token keyword">in</span> output<span class="token punctuation">:</span> <span class="token comment codered"> リストを一つずつ取り出す</span>
+<span class="codenum-elem">020</span>    <span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">"代表的な製品 =&gt; "</span> <span class="token operator">+</span> item<span class="token punctuation">)</span>
+<span class="codenum-elem">021</span>
+</code></pre>
+
+            <p>次にPythonで上記コードを実行します。</p>
+            <pre class="language-bash"><code class="language-bash">python3 model_io.py</code></pre>
+
+            <p>すると、以下のような結果が確認できます。</p>
+            <pre class="language-text"><code class="language-text">代表的な製品 =&gt; iPhone
+代表的な製品 =&gt; Macbook
+代表的な製品 =&gt; iPad
+</code></pre>
+
+            <p>どのような動きになっているのか詳しく見ていきましょう。</p>
+            <p>
+              CommaSeparatedListOutputParserは結果をリスト形式で受け取るOutput Parserです。
+              6行目で、CommaSeparatedListOutputParserを初期化し、output_parser変数へ保存し、後で使うための準備をしています。
+            </p>
+            <p>CommaSeparatedListOutputParserで行われる処理は以下の２つになります。</p>
+            <ul>
+              <li>リスト形式で出力するように、言語モデルへ出力形式の指示の追加</li>
+              <li>出力結果を解析し、リスト形式に変換</li>
+            </ul>
+            <p>まず、リスト形式で出力するように、言語モデルへ出力形式の指示を追加する処理は13行目で行われます。</p>
+            <p>output_parser.get_format_instructions()を実行すると、以下のようなプロンプトが確認できます。</p>
+            <pre class="language-text"><code class="language-text">Your response should be a list of comma separated values, eg: `foo, bar, baz`</code></pre>
+
+            <p>翻訳すると以下になり、言語モデルへ出力形式の指示を追加していることがわかります。</p>
+            <pre class="language-text"><code class="language-text">応答は`foo, bar, baz`のようなカンマで区切られた値のリストでなければなりません。
+</code></pre>
+
+            <p>つまり、言語モデルは「Appleが開発した代表的な製品を3つ教えてください」と、「応答は<code>foo, bar, baz</code>のようなカンマで区切られた値のリストでなければなりません。」という２つのプロンプトを使って呼び出されることになり、言語モデルへの指示に加えて出力形式の指示も追加されていることがわかります。</p>
+            <p>10行目では先ほどのプロンプトを使って言語モデルを呼び出し、結果をresultで受け取っています。</p>
+            <p>次に17行目ではoutput_parser.parse()で出力結果を解析し、言語モデルからの応答をリスト形式に変換しています。</p>
+            <p>今回の例では「["iPhone", "Macbook", "iPad"]」という<strong><em>文字列</em></strong>が言語モデルから返され、これをoutput_parser.parse()で実行することにより、Pythonの<strong><em>配列</em></strong>へと変換されています。</p>
+            <p>19行目ではリスト形式に変換されたことで、python上でforを実行することが確認できます。</p>
+            <p>このように言語モデルが生成する出力は、デフォルトではプレーンテキストの文字列です。この文字列をそのまま利用することもできますが、アプリケーションを開発する場合、この文字列から特定の情報を抽出したり、データとして構造化することが多く必要となります。</p>
+            <p>アプリケーションで利用しやすいデータに変換するためには、出力文字列を解析して必要な情報を抽出する処理が不可欠です。解析された構造化データは、データベースに保存したりほかのAPIに渡したりといった後続の処理で簡単に利用できます。一方、プレーンテキストのままでは、文字列処理を駆使してデータを抽出する必要が生じ、コードが複雑になりやすいです。また、出力内容が不完全であった場合にエラー処理をしやすくするためにも、データとして解析して構造化することが重要です。たとえば、必須の項目がない場合にエラーを出力するといったバリデーションが可能になります。</p>
+            <p>LangChainが提供するOutput Parsersを利用することで、望みのデータ構造に合わせて自由にパース（変換）でき、アプリケーションの要件に即した解析処理を実装できます。</p>
+            <p>このように、出力を解析することで、単なるテキストから意味のあるデータへと変換し、アプリケーションでの利用を容易にすることができます。Output Parsersは素早くパース処理を実装するために強力なツールといえます。</p>
+            <div class="column">
+              <h4 id="h4_7">foo, bar, bazってなに？</h4>「foo」、「bar」、「baz」は、プログラミングの世界で一般的に使われる仮の名前です。サンプルプログラムなどで、まったく意味のない変数名や関数名をつけるときなどに使わます。
+              もし適当にbookやcupなどの意味のある名前をつけてしまうと、読者やほかのプログラマーはその名前が何か特定の目的を果たすかのように誤解する可能性があります。たとえば、'book'という名前の変数があると、それが何かの書籍に関するデータを保持していると解釈されることが一般的です。しかし、サンプルコードや教材では、その変数が実際に何を示しているのかは重要ではない場合が多いです。
+              <p>そこで、「foo」、「bar」、「baz」のような意味のない名前が使われます。これらの名前はプログラミングにおけるメタ構文変数（プログラム内で具体的な機能や役割を持つことを期待しない変数）として広く認識されています。これにより、読者は変数名自体に注目することなく、プログラムの構造やロジックに集中できます。</p>
+              <div></div>
+            </div>
+          </section>
+        </section>
+      </section>
+      <section class="level2" aria-labelledby="language-models--モデルを使いやすく">
+        <div class="secheader"><h2 id="h2_1">Language Models -モデルを使いやすく</h2><p><span class="hashtag">#言語モデル／#LanguageModel/#ChatModel/#LLM</span><br>前のセクションでModel I/Oを使った開発の一連の流れを確認しました。このセクションでは言語モデルを扱うモジュールであるLanguage Modelsについて確認しましょう。</p></div>
+        
+        <section class="level3" aria-labelledby="統一されたインターフェイスで使いやすく">
+          <h3 id="h3_8">統一されたインターフェイスで使いやすく</h3>
+          <p>
+            Model I/OモジュールのサブモジュールであるLanguage Modelsの目的は、さまざまな種類がある言語モデルを統一したインターフェイスを使って扱いやすくすることです。
+            OpenAI社が開発する言語モデルだけとっても、gpt3.5-turboとgpt-3.5-turbo-instructでは呼び出し方が異なります。アプリケーションを開発する過程で、プロンプトやモデルを差し替えてみたりと試行錯誤することは多くあります。
+          </p>
+          <p>
+            このように試行錯誤をしているときに、それぞれのモデルで異なる呼び出し方について調べつつ作業するのは手間がかかるということはイメージできると思います。
+            このモジュールを使うことで細かい呼び出し先のURLや使い方を調べることなく統一された方法でアクセスできるようになります。
+          </p>
+        </section>
+        <section class="level3" aria-labelledby="chatmodelとllm">
+          <h3 id="h3_9">ChatModelとLLM</h3>
+          <p>Language Modelsには使用する言語モデルに合わせて大きく分けて2種類のモジュール（Model I/Oの孫モジュール）が用意されています。OpenAIの「Chat」モデルのような対話形式で使用する言語モデルを扱う「ChatModel」、OpenAIの「Complete」のような文章の続きを用意する言語モデルを扱う「LLM」です。</p>
+          <p>
+            <span class="comment">要作図</span>
+            </p><div class="figure">
+            
+            <svg width="63.923mm" height="27.728mm" viewBox="0 0 63.923 27.728">
+              <image width="213.078" height="92.428" xlink:href="img1/module_tree.png" transform="translate(0,0) scale(0.3)"></image>
+            </svg>
+          
+          </div>
+          <p>ChatModelとLLMの違いは前提となる入力と出力です。ChatModelは一連の対話（HumanMessageやAIMessageの配列）を入力とし、次の返答を予測します。対話形式のテキスト生成、特にチャットボットの開発に適しています。ChatModelは前のメッセージのコンテキストを考慮するため、全体の対話の流れを理解しやすい特性を持っています。</p>
+          <p>一方、LLMは対話ではなく、文の続きを予測します。このモデルは1つのプロンプトだけを考慮します。</p>
+          <p>今回はLLMを使ってテキストの続きを予測してみましょう。［ファイル］メニューの［新しいテキストファイル］から、「model_io_llm.py」というファイルを作成し、以下の通りに入力してください。</p>
+          <section class="level6" aria-labelledby="model_io_llmpy">
+            <h6 class="codenumber" id="h6_18">model_io_llm.py</h6>
+            <pre class="language-python"><code class="language-python"><span class="codenum-elem">001</span><span class="token keyword">from</span> langchain<span class="token punctuation">.</span>llms <span class="token keyword">import</span> OpenAI
+<span class="codenum-elem">002</span>
+<span class="codenum-elem">003</span>llm <span class="token operator">=</span> OpenAI<span class="token punctuation">(</span>model<span class="token operator">=</span><span class="token string">"gpt-3.5-turbo-instruct"</span> <span class="token comment codered"> 呼び出すモデルを指定</span>
+<span class="codenum-elem">004</span>             <span class="token punctuation">)</span>
+<span class="codenum-elem">005</span>
+<span class="codenum-elem">006</span>result <span class="token operator">=</span> llm<span class="token punctuation">(</span>
+<span class="codenum-elem">007</span>    <span class="token string">"美味しいラーメンを"</span><span class="token punctuation">,</span>  <span class="token comment codered"> 言語モデルに入力されるテキスト</span>
+<span class="codenum-elem">008</span>    stop<span class="token operator">=</span><span class="token string">"。"</span>  <span class="token comment codered"> 「。」が出力された時点で続きを生成しないように</span>
+<span class="codenum-elem">009</span><span class="token punctuation">)</span>
+<span class="codenum-elem">010</span><span class="token keyword">print</span><span class="token punctuation">(</span>result<span class="token punctuation">)</span>
+<span class="codenum-elem">011</span>
+</code></pre>
+
+            <p>次にPythonで上記コードを実行します。</p>
+            <pre class="language-bash"><code class="language-bash">python3 model_io_llm.py</code></pre>
+
+            <p>すると、以下のような結果が確認できます。</p>
+            <pre class="language-text"><code class="language-text">食べたいです</code></pre>
+
+            <p>OpenAIクラスはOpenAIの続きを生成することが目的のLLMなので、「美味しいラーメンが」に続く「食べたいです」といった文章が出力されました。</p>
+            <p>LLMは1章の4ページで紹介した、OpenAIの「Complete」モデルをLangChainから使う場合に使用します。ChatModelの場合と同様に同じLLMモジュールなら簡単に差し替えできます。</p>
+            <p>ローカルで実行可能な言語モデルである、GPT4Allに差し替えるには以下のように変更するだけです。</p>
+          </section>
+          <section class="level6" aria-labelledby="model_io_llmpy-1">
+            <h6 class="codenumber" id="h6_19">model_io_llm.py</h6>
+            <pre class="language-python"><code class="language-python"><span class="codenum-elem">001</span><span class="token keyword">from</span> langchain<span class="token punctuation">.</span>llms <span class="token keyword">import</span> GPT4All <span class="token comment codered"> 読み込むLLMをGPT4Allに変更する</span>
+<span class="codenum-elem">002</span>
+<span class="codenum-elem">003</span>llm <span class="token operator">=</span> GPT4All<span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token comment codered"> GPT4AllのLanguage Modelsを初期化</span>
+<span class="codenum-elem">004</span><span class="token operator">~</span><span class="token operator">~</span><span class="token operator">~</span>省略<span class="token operator">~</span><span class="token operator">~</span><span class="token operator">~</span>
+</code></pre>
+
+            <p>
+              LangChainでほかのモジュールとLanguage Modelsを組み合わせて使うときに、LLMを前提とするもの、ChatModelを前提とするものそれぞれが存在します。
+              モジュールを使うときにどちらを使っているか把握しておく必要があるので違いを覚えておきましょう。
+            </p>
+          </section>
+        </section>
+        <section class="level3" aria-labelledby="language-modelsの便利な機能">
+          <h3 id="h3_10">Language Modelsの便利な機能</h3>
+          <p>Language Modelsには「ChatModel」、「LLM」が存在し、差し替えられることについて見てきましたが、Language Modelsでできることはこれだけではありません。具体的に見ていきましょう。</p>
+          <section class="level4" aria-labelledby="キャッシュをかけることができる">
+            <h4 id="h4_8">キャッシュをかけることができる</h4>
+            <p>OpenAIなどのAPIは~ページで解説したとおり、使用したトークン数により課金されます。たとえば、同じプロンプトを2回送信すると2回分の料金がかかってしまいます。また、当然2回APIを呼び出すことになり、実行時間が倍かかることになり効率がよくありません。Language Modelsではこのような問題を解決するために簡単にキャッシュをかけることができる機能が用意されています。</p>
+            <p>実際にどのように動くか見ていきましょう。［ファイル］メニューの［新しいテキストファイル］から、「chat_model_cache.py」というファイルを作成し、以下の通りに入力してください。</p>
+            <section class="level6" aria-labelledby="chat_model_cachepy">
+              <h6 class="codenumber" id="h6_20">chat_model_cache.py</h6>
+              <pre class="language-python"><code class="language-python"><span class="codenum-elem">001</span><span class="token keyword">import</span> time  <span class="token comment codered"> 実行時間を計測するためにtimeモジュールをインポート</span>
+<span class="codenum-elem">002</span><span class="token keyword">import</span> langchain
+<span class="codenum-elem">003</span><span class="token keyword">from</span> langchain<span class="token punctuation">.</span>cache <span class="token keyword">import</span> InMemoryCache  <span class="token comment codered"> InMemoryCacheをインポート</span>
+<span class="codenum-elem">004</span><span class="token keyword">from</span> langchain<span class="token punctuation">.</span>chat_models <span class="token keyword">import</span> ChatOpenAI
+<span class="codenum-elem">005</span><span class="token keyword">from</span> langchain<span class="token punctuation">.</span>schema <span class="token keyword">import</span> HumanMessage
+<span class="codenum-elem">006</span>
+<span class="codenum-elem">007</span>langchain<span class="token punctuation">.</span>llm_cache <span class="token operator">=</span> InMemoryCache<span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token comment codered"> llm_cacheにInMemoryCacheを設定</span>
+<span class="codenum-elem">008</span>
+<span class="codenum-elem">009</span>chat <span class="token operator">=</span> ChatOpenAI<span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="codenum-elem">010</span>start <span class="token operator">=</span> time<span class="token punctuation">.</span>time<span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token comment codered"> 実行開始時間を記録</span>
+<span class="codenum-elem">011</span>result <span class="token operator">=</span> chat<span class="token punctuation">(</span><span class="token punctuation">[</span> <span class="token comment codered"> 一度目の実行を行う</span>
+<span class="codenum-elem">012</span>    HumanMessage<span class="token punctuation">(</span>content<span class="token operator">=</span><span class="token string">"こんにちは！"</span><span class="token punctuation">)</span>
+<span class="codenum-elem">013</span><span class="token punctuation">]</span><span class="token punctuation">)</span>
+<span class="codenum-elem">014</span>
+<span class="codenum-elem">015</span>end <span class="token operator">=</span> time<span class="token punctuation">.</span>time<span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token comment codered"> 実行終了時間を記録</span>
+<span class="codenum-elem">016</span><span class="token keyword">print</span><span class="token punctuation">(</span>result<span class="token punctuation">.</span>content<span class="token punctuation">)</span>
+<span class="codenum-elem">017</span><span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string-interpolation"><span class="token string">f"実行時間: </span><span class="token interpolation"><span class="token punctuation">{</span>end <span class="token operator">-</span> start<span class="token punctuation">}</span></span><span class="token string">秒"</span></span><span class="token punctuation">)</span>
+<span class="codenum-elem">018</span>
+<span class="codenum-elem">019</span>start <span class="token operator">=</span> time<span class="token punctuation">.</span>time<span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token comment codered"> 実行開始時間を記録</span>
+<span class="codenum-elem">020</span>result <span class="token operator">=</span> chat<span class="token punctuation">(</span><span class="token punctuation">[</span> <span class="token comment codered"> 同じ内容で二度目の実行を行うことでキャッシュが利用され、即時に実行完了している</span>
+<span class="codenum-elem">021</span>    HumanMessage<span class="token punctuation">(</span>content<span class="token operator">=</span><span class="token string">"こんにちは！"</span><span class="token punctuation">)</span>
+<span class="codenum-elem">022</span><span class="token punctuation">]</span><span class="token punctuation">)</span>
+<span class="codenum-elem">023</span>
+<span class="codenum-elem">024</span>end <span class="token operator">=</span> time<span class="token punctuation">.</span>time<span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token comment codered"> 実行終了時間を記録</span>
+<span class="codenum-elem">025</span><span class="token keyword">print</span><span class="token punctuation">(</span>result<span class="token punctuation">.</span>content<span class="token punctuation">)</span>
+<span class="codenum-elem">026</span><span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string-interpolation"><span class="token string">f"実行時間: </span><span class="token interpolation"><span class="token punctuation">{</span>end <span class="token operator">-</span> start<span class="token punctuation">}</span></span><span class="token string">秒"</span></span><span class="token punctuation">)</span>
+<span class="codenum-elem">027</span>
+</code></pre>
+
+              <p>入力が完了したら以下のコマンドで実行します。</p>
+              <pre class="language-text"><code class="language-text">python3 chat_model_cache.py</code></pre>
+
+              <p>すると以下のような表示が確認できます。</p>
+              <pre class="language-text"><code class="language-text">こんにちは！いつもお世話になっています。どのようなご用件でしょうか？
+実行時間: 1.7952373027801514秒
+こんにちは！いつもお世話になっています。どのようなご用件でしょうか？
+実行時間: 0.0007660388946533203秒</code></pre>
+
+              <p>7行目ではlangchain.llm_cacheにInMemoryCache()を設定しています。InMemoryCacheとは、メモリ内にデータを一時的に保持するキャッシュ方法を提供するクラスです。特定の要求に対する応答が一度生成されると、それはキャッシュに保存され、同じ要求が再度行われたときには、すでに保存されている応答をすぐに提供することが可能になります。この結果、時間とリソースの節約につながります。</p>
+              <p>ただしメモリ内のキャッシュは、プログラムが実行されている間は保持されますが、プログラムが終了すると削除されます。今回の場合はプログラムの実行中、つまり以下コマンドの実行開始から終了までは保持されますが、もう一度実行するとキャッシュは削除されてしまいます。</p>
+              <pre class="language-text"><code class="language-text">python3 chat_model_cache.py</code></pre>
+
+              <p>長期間にわたってキャッシュする必要がある場合や、プログラムの再起動をまたいでキャッシュを保持したい場合には、InMemoryCacheではなくSQLiteというデータベースに保存できるSQLiteCacheなどを使うとよいでしょう。</p>
+              <p>今回の実行例では、"こんにちは！"というメッセージに対する応答を初めて生成するのに約1.8秒かかりましたが、同じメッセージに対する応答を再度生成するのには、キャッシュを利用してほぼ瞬時にできました。これにより、APIの呼び出し回数とそれに伴う課金を減らせます。</p>
+              <p>Language Modelsで簡単にキャッシュをかけ、動作を高速化するための便利な機能の動作を確認できました。</p>
+            </section>
+          </section>
+          <section class="level4" aria-labelledby="結果を逐次表示させる">
+            <h4 id="h4_9">結果を逐次表示させる</h4>
+            <p>Language Modelsの機能の1つに、実行中の処理を逐次表示させるstreaming機能があります。</p>
+            <p>逐次表示とは、処理が完了する前に一部の結果を順次受け取り、表示することです。この機能は、長い応答を生成する場合や、ユーザーに対してリアルタイムな返答を提供したい場合に役立ちます。</p>
+            <p>LangChainでは、このstreaming機能をCallbacksモジュールを用いて提供しています。Callbacksモジュールについて5ページで詳しく解説します。</p>
+            <p>LangChainのstreaming機能を使用して、APIの実行中に逐次結果を表示する機能を作成してみましょう。［ファイル］メニューの［新しいテキストファイル］から、「chat_model_streaming.py」というファイルを作成し、以下の通りに入力してください。</p>
+            <section class="level6" aria-labelledby="chat_model_streamingpy">
+              <h6 class="codenumber" id="h6_21">chat_model_streaming.py</h6>
+              <pre class="language-python"><code class="language-python"><span class="codenum-elem">001</span><span class="token keyword">from</span> langchain<span class="token punctuation">.</span>callbacks<span class="token punctuation">.</span>streaming_stdout <span class="token keyword">import</span> StreamingStdOutCallbackHandler
+<span class="codenum-elem">002</span><span class="token keyword">from</span> langchain<span class="token punctuation">.</span>chat_models <span class="token keyword">import</span> ChatOpenAI
+<span class="codenum-elem">003</span><span class="token keyword">from</span> langchain<span class="token punctuation">.</span>schema <span class="token keyword">import</span> HumanMessage
+<span class="codenum-elem">004</span>
+<span class="codenum-elem">005</span>chat <span class="token operator">=</span> ChatOpenAI<span class="token punctuation">(</span>
+<span class="codenum-elem">006</span>    streaming<span class="token operator">=</span><span class="token boolean">True</span><span class="token punctuation">,</span>  <span class="token comment codered"> streamingをTrueに設定し、ストリーミングモードで実行</span>
+<span class="codenum-elem">007</span>    callbacks<span class="token operator">=</span><span class="token punctuation">[</span>
+<span class="codenum-elem">008</span>        StreamingStdOutCallbackHandler<span class="token punctuation">(</span><span class="token punctuation">)</span>  <span class="token comment codered"> StreamingStdOutCallbackHandlerをコールバックとして設定</span>
+<span class="codenum-elem">009</span>    <span class="token punctuation">]</span>
+<span class="codenum-elem">010</span><span class="token punctuation">)</span>
+<span class="codenum-elem">011</span>resp <span class="token operator">=</span> chat<span class="token punctuation">(</span><span class="token punctuation">[</span> <span class="token comment codered"> リクエストを送信</span>
+<span class="codenum-elem">012</span>    HumanMessage<span class="token punctuation">(</span>content<span class="token operator">=</span><span class="token string">"おいしいステーキの焼き方を教えて"</span><span class="token punctuation">)</span>
+<span class="codenum-elem">013</span><span class="token punctuation">]</span><span class="token punctuation">)</span>
+<span class="codenum-elem">014</span>
+</code></pre>
+
+              <p>入力が完了したら以下のコマンドで実行します。</p>
+              <pre class="language-text"><code class="language-text">python3 chat_model_streaming.py</code></pre>
+
+              <p>するとこれまでと異なり、以下のように逐次表示されることが確認できるかと思います。</p>
+              <pre class="language-text"><code class="language-text">以上がおいしいステーキの焼き方です。焼き加減や調味料は好みによって異なるため、自分の好みに合わせてアレンジしてみてください。おいし いステーキの焼き方を教えます。
+
+1. ステーキを室温に戻す: ステーキを冷蔵庫から出して、室温に戻します。これにより、ステーキが均一に焼けます。
+
+2. ステーキを調味する: ステーキに塩とこしょうを振ります。塩はステーキの旨味を引き出し、こしょうは風味を加えます。必要に応じて、他のスパイスやハーブを追加することもできます。
+
+3. フライパンを熱する: フライパンを中火で加熱します。フライパンが十分に熱くなったら、少量の油を敷きます。
+
+4. ステーキを焼く: ステーキをフライパンに入れます。焼く時間はステーキの厚さや焼き加減によって異なりますが、一般的には片面2〜3分程度焼きます。焼くときには、ステーキにしっかりと火が通るように押さえつけることが重要です。
+
+5. 裏返す: ステーキを裏返し、もう一度2〜3分焼きます。焼き加減は好みに応じて調整してください。レア、ミディアムレア、ミディアム、ウェルダンなど、焼き加減はさまざまな種類があります。
+
+6. 余熱させる: ステーキをフライパンから取り出し、余熱させます。これにより、ステーキの中に閉じ込められた旨味が均等に行き渡ります。
+
+7. カットして提供する: ステーキをカットし、お好みの厚さで提供します。お皿に盛り付けて、お好みのソースや付け合わせと一緒に召し上がれます。
+
+以上がおいしいステーキの焼き方です。焼き加減や調味料は好みによって異なるため、自分の好みに合わせてアレンジしてみてください。</code></pre>
+
+              <p>今回のコードでは6行目でChatOpenAIを初期化する際にstreamingをTrueに、callbacksにStreamingStdOutCallbackHandlerが設定されていることがわかります。</p>
+              <p>ChatOpenAIは初期化時に与える引数を変更することで動作を変えられます。streamingはTrueに設定することでAPIの呼び出し完了後に処理するのではなく、APIからの応答が到着するたびに処理を行う逐次処理を行なえます。</p>
+              <p>callbacksには逐次処理する内容を設定します。ここではStreamingStdOutCallbackHandlerが設定されており、結果をターミナル（標準出力）に出力するように設定しています。</p>
+              <p>13行目で言語モデルを呼び出し、処理を開始しています。</p>
+              <p>今回のコードでは実行後に結果を表示するためのprint文は存在しません。これは、StreamingStdOutCallbackHandlerで実行される処理内で結果を逐次表示しているため、print文で実行結果を表示する必要がないためです。</p>
+              <p>もし、結果を表示したうえでソースコードを扱いたい場合は以下のように変更することで取得可能です。</p>
+            </section>
+            <section class="level6" aria-labelledby="chat_model_streamingpy-1">
+              <h6 id="h6_22" class="codelist">chat_model_streaming.py</h6>
+              <div class="codeno"><pre class="language-python"><code class="language-python"><span class="token operator">~</span><span class="token operator">~</span><span class="token operator">~</span>省略<span class="token operator">~</span><span class="token operator">~</span><span class="token operator">~</span>
+resp <span class="token operator">=</span> chat<span class="token punctuation">(</span><span class="token punctuation">[</span> <span class="token comment codered"> リクエストを送信</span>
+    HumanMessage<span class="token punctuation">(</span>content<span class="token operator">=</span><span class="token string">"おいしいステーキの焼き方を教えて"</span><span class="token punctuation">)</span>
+<span class="token punctuation">]</span><span class="token punctuation">)</span>
+response_text <span class="token operator">=</span> resp<span class="token punctuation">.</span>content</code></pre></div>
+
+              <p>Language Modelsのcallback機能とstreaming機能を使ってAPIの呼び出し結果を逐次表示できることを確認しました。</p>
+              <div class="column">
+                <h4 id="h4_10">LangChain開発をブラウザから行えるFlowise</h4>Github上にはLangChainを活用したプロジェクトがいくつも公開されています。そのうちの一つであるFlowiseを紹介します。
+                <p>FlowiseとはLangChainを用いた開発をブラウザノーコードUIフレームワークです。</p>
+                <div class="figure">
+                  
+                  <img src="img1/flowise.png?svgimg=10,150,65,-2,">
+                  </div>
+                
+                <p>ブラウザからドラック＆ドロップでパーツを組み合わせることでLangChainを使った開発と実行が行なえます。また、作成したアプリケーションをChatBotとして簡単にインターネット上に公開できる機能も用意されています。</p>
+                <div class="figure">
+                  
+                  <img src="img1/flowise_chat.png?svgimg=10,150,65,-2,">
+                  </div>
+                
+                <p>ただし、Flowise上で利用できるLangChainの機能は限定的で、全体の概念を理解しないと使いづらいです。</p>
+                <p>まずは、まずPythonを使ってLangChainの使い方を学んでいきましょう。</p>
+              </div>
+            </section>
+          </section>
+        </section>
+      </section>
+      <section class="level2" aria-labelledby="templates---プロンプトの構築を効率化する">
+        <div class="secheader"><h2 id="h2_2">Templates - プロンプトの構築を効率化する</h2><p><span class="hashtag">#プロンプトの構築／#Template</span><br>前のセクションでModel I/Oを使った開発を確認しました。今回は、その次のステップとして、プロンプトの構築を簡単にするTemplatesの機能について詳しく解説します。</p></div>
+        
+        <section class="level3" aria-labelledby="プロンプトエンジニアリングによる結果の最適化">
+          <h3 id="h3_11">プロンプトエンジニアリングによる結果の最適化</h3>
+          <p>言語モデルはテキストという形の入力を受け取ります。このテキスト入力はプロンプトと呼ばれます。</p>
+          <p>GPT-3.5のような最新の言語モデルは、人間が行うような指示を単純な文章で与えても問題なくタスクを実行できる場合も多いですが、単純な指示では実行することが難しいタスクも多くあります。</p>
+          <p>しかし、プロンプトを最適化することにより、単純な命令では難しかったタスクをこなすことが可能になったり、得られる結果をよりよいものにしたりできます。このプロンプトを最適化する過程、そしてその結果として得られる改善された成果を「プロンプトエンジニアリング」と呼びます。</p>
+          <p>プロンプトエンジニアリングの効果は大きく、適切なプロンプトで言語モデルを呼び出すことで、以前は不可能と思われていたような高度なタスクも可能になりつつあります。たとえば、科学論文の要約生成、専門知識を要する文章作成、高度なインタラクションなどが可能になってきています。</p>
+          <p>Templatesモジュールではこのようなプロンプトエンジニアリングを助け、プロンプトの構築を楽にするための機能を提供しています。</p>
+          <section class="level4" aria-labelledby="出力例を含んだプロンプトを作成する">
+            <h4 id="h4_11">出力例を含んだプロンプトを作成する</h4>
+            <p>Model I/OのTemplateモジュールでは前のセクションの「変数をプロンプトに展開する」で学んだような変数と文字列を組み合わせるだけでなく、プロンプトエンジニアリングを含むプロンプトに関わるさまざまな機能を提供しています。プロンプトエンジニアリングの分野では、効果が高いとされている手法が複数存在しますが、その1つであるFewShotPromptについて紹介します。Few-shot promptとは、言語モデルに例を示しながら目的のタスクを実行させる手法です。</p>
+            <p>具体的には、まず言語モデルが実行すべきタスクについて簡潔に指示し、次に、そのタスクの入力と出力の例をいくつか示します。すると、言語モデルはその例からタスクのパターンを学習し、新しい入力が与えられたときに同様の出力を生成できるようになります。</p>
+            <p>たとえば、文字をアルファベットの大文字に変換するタスクであれば、次のようにfew-shot promptを作成できます。</p>
+            <pre class="language-text"><code class="language-text">次の例にならって、小文字で入力された文字列を大文字に変換してください:
+
+入力: hello
+出力: HELLO 
+
+入力: chatgpt
+出力: CHATGPT
+
+入力: example
+出力: EXAMPLE
+
+入力: {input}
+</code></pre>
+
+            <p>このように、実例を示すことで言語モデルは大文字変換のルールを学習し、新しい入力にも適用できるようになります。</p>
+            <p>Few-shot promptのメリットは、言語モデルに具体的な例を示すことで、人間がイメージする出力に近い結果を生成させられる点です。また、例を変えることで言語モデルの動作を柔軟に制御できます。</p>
+            <p>Few-shot promptは、言語モデルを使ったアプリケーション開発で広く利用されているテクニックです。LangChainではこのようなFew-shot Promptを簡単に書くための機能を提供しています。</p>
+            <p>実際にFew-shot promptをLangChainで実装してみましょう。［ファイル］メニューの［新しいてファイル］から、「model_io_few_shot.py」というファイルを作成し、以下の通りに入力してください。</p>
+            <section class="level6" aria-labelledby="model_io_few_shotpy">
+              <h6 class="codenumber" id="h6_23">model_io_few_shot.py</h6>
+              <pre class="language-python"><code class="language-python"><span class="codenum-elem">001</span><span class="token keyword">from</span> langchain<span class="token punctuation">.</span>llms <span class="token keyword">import</span> OpenAI
+<span class="codenum-elem">002</span><span class="token keyword">from</span> langchain<span class="token punctuation">.</span>prompts <span class="token keyword">import</span> FewShotPromptTemplate<span class="token punctuation">,</span> PromptTemplate
+<span class="codenum-elem">003</span>
+<span class="codenum-elem">004</span>examples <span class="token operator">=</span> <span class="token punctuation">[</span>
+<span class="codenum-elem">005</span>    <span class="token punctuation">{</span>
+<span class="codenum-elem">006</span>        <span class="token string">"input"</span><span class="token punctuation">:</span> <span class="token string">"LangChainはChatGPT・Large Language Model (LLM)の実利用をより柔軟に簡易に行うためのツール群です"</span><span class="token punctuation">,</span>  <span class="token comment codered"> 入力例</span>
+<span class="codenum-elem">007</span>        <span class="token string">"output"</span><span class="token punctuation">:</span> <span class="token string">"LangChainは、ChatGPT・Large Language Model (LLM)の実利用をより柔軟に、簡易に行うためのツール群です。"</span>  <span class="token comment codered"> 出力例</span>
+<span class="codenum-elem">008</span>    <span class="token punctuation">}</span>
+<span class="codenum-elem">009</span><span class="token punctuation">]</span>
+<span class="codenum-elem">010</span>
+<span class="codenum-elem">011</span>prompt <span class="token operator">=</span> PromptTemplate<span class="token punctuation">(</span>  <span class="token comment codered"> PromptTemplateの準備</span>
+<span class="codenum-elem">012</span>    input_variables<span class="token operator">=</span><span class="token punctuation">[</span><span class="token string">"input"</span><span class="token punctuation">,</span> <span class="token string">"output"</span><span class="token punctuation">]</span><span class="token punctuation">,</span>  <span class="token comment codered"> inputとoutputを入力変数として設定</span>
+<span class="codenum-elem">013</span>    template<span class="token operator">=</span><span class="token string">"入力: {input}\n出力: {output}"</span><span class="token punctuation">,</span>  <span class="token comment codered"> テンプレート</span>
+<span class="codenum-elem">014</span><span class="token punctuation">)</span>
+<span class="codenum-elem">015</span>
+<span class="codenum-elem">016</span>few_show_prompt <span class="token operator">=</span> FewShotPromptTemplate<span class="token punctuation">(</span>  <span class="token comment codered"> FewShotPromptTemplateの準備</span>
+<span class="codenum-elem">017</span>    examples<span class="token operator">=</span>examples<span class="token punctuation">,</span>  <span class="token comment codered"> 入力例と出力例を定義</span>
+<span class="codenum-elem">018</span>    example_prompt<span class="token operator">=</span>prompt<span class="token punctuation">,</span>  <span class="token comment codered"> FewShotPromptTemplateにPromptTemplateを渡す</span>
+<span class="codenum-elem">019</span>    prefix<span class="token operator">=</span><span class="token string">"以下の句読点の抜けた入力に句読点を追加してください。追加して良い句読点は「、」「。」のみです。他の句読点は追加しないでください。"</span><span class="token punctuation">,</span>  <span class="token comment codered"> 指示を追加する</span>
+<span class="codenum-elem">020</span>    suffix<span class="token operator">=</span><span class="token string">"入力: {input_string}\n出力:"</span><span class="token punctuation">,</span>  <span class="token comment codered"> 出力例の入力変数を定義</span>
+<span class="codenum-elem">021</span>    input_variables<span class="token operator">=</span><span class="token punctuation">[</span><span class="token string">"input_string"</span><span class="token punctuation">]</span><span class="token punctuation">,</span>  <span class="token comment codered"> FewShotPromptTemplateの入力変数を設定</span>
+<span class="codenum-elem">022</span><span class="token punctuation">)</span>
+<span class="codenum-elem">023</span>llm <span class="token operator">=</span> OpenAI<span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="codenum-elem">024</span>formatted_prompt <span class="token operator">=</span> few_show_prompt<span class="token punctuation">.</span><span class="token builtin">format</span><span class="token punctuation">(</span> <span class="token comment codered"> FewShotPromptTemplateを使ってプロンプトを作成</span>
+<span class="codenum-elem">025</span>    input_string<span class="token operator">=</span><span class="token string">"私はさまざまな機能がモジュールとして提供されているLangChainを使ってアプリケーションを開発しています"</span>
+<span class="codenum-elem">026</span><span class="token punctuation">)</span>
+<span class="codenum-elem">027</span>result <span class="token operator">=</span> llm<span class="token punctuation">.</span>predict<span class="token punctuation">(</span>formatted_prompt<span class="token punctuation">)</span>
+<span class="codenum-elem">028</span><span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">"formatted_prompt: "</span><span class="token punctuation">,</span> formatted_prompt<span class="token punctuation">)</span>
+<span class="codenum-elem">029</span><span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">"result: "</span><span class="token punctuation">,</span> result<span class="token punctuation">)</span>
+</code></pre>
+
+              <p>次にPythonで上記コードを実行します。</p>
+              <pre class="language-bash"><code class="language-bash">python3 model_io_few_shot.py</code></pre>
+
+              <p>すると、以下のような結果が確認できます。</p>
+              <pre class="language-text"><code class="language-text">formatted_prompt:  以下に句読点の抜けた入力に句読点を追加してください。追加して良い句読点は「、」「。」のみです。他の句読点は追加しないでください。
+
+入力: LangChainはChatGPT・Large Language Model (LLM)の実利用をより柔軟に簡易に行うためのツール群です
+出力: LangChainは、ChatGPT・Large Language Model (LLM)の実利用をより柔軟に、簡易に行うためのツール群です。
+
+入力: 私はさまざまな機能がモジュールとして提供されているLangChainを使ってアプリケーションを開発しています
+出力:
+result:   私は、さまざまな機能がモジュールとして提供されている、LangChainを使ってアプリケーションを開発しています。
+
+</code></pre>
+
+              <p>入力例と出力例に従って句読点の存在しない文章に句読点を追加できました。</p>
+              <p>コードを詳しく見てみましょう。</p>
+              <p>
+                4行目では入力例と出力例をリストで持った出力例が設定されています。
+                ここでは、input、outputをキーにしたオブジェクトの配列を用意しています。
+                今回設定している例では出力例は1つのみですが、実際は複数の出力例を入力することで目的の結果を得やすくなります。
+              </p>
+              <p>
+                11行目では6ページと同じようにPromptTemplateが設定されています。
+                examplesではinput、outputをキーにしたオブジェクトの配列を渡しているので、PromptTemplateを初期化するさいにinput_variablesにはinput、outputを渡し、templateには両方を含んだプロンプトを渡しています。
+              </p>
+              <p>
+                16行目ではFewShotPromptTemplateを準備しています。
+                このテンプレートは以下を引数として受け取ります。
+              </p>
+              <ul>
+                <li>examples<br>プロンプトに挿入する例をリスト形式で渡します。</li>
+                <li>example_prompt<br>例を挿入する書式を設定します。PromptTemplateを渡す必要があります。</li>
+                <li>prefix<br>例を出力するプロンプトの前に置かれるテキストです。今回のコードでは言語モデルへの指示です。</li>
+                <li>suffix<br>例を出力するプロンプトの後に置かれるテキストです。今回のコードではユーザーからの入力が入ります。</li>
+                <li>input_variables<br>全体のプロンプトが期待する変数名のリストです。</li>
+              </ul>
+              <p>このように引数で受け取った値を組み合わせてプロンプトを作成しています。</p>
+              <p>以上で単純な文字列結合で組み込みするよりプログラムで扱いやすい形でプログラムを構築できることが確認できました。</p>
+              <div class="column">
+                <h4 id="h4_12">プロンプトエンジニアリングをさらに学ぶ</h4>以下URLで公開されているPrompt Engineering Guideではプロンプトエンジニアリングについての考え方や手法について学ぶことができます。
+                <p><a href="https://www.promptingguide.ai/jp">https://www.promptingguide.ai/jp</a></p>
+                <div class="figure">
+                  
+                  <img src="img1/prompt_.png?svgimg=10,150,65,-2,">
+                  </div>
+                
+                <p>プロンプトの書き方などの基本的な知識から、さきほど紹介したFew-shot promptやその他の手法も紹介されています。</p>
+                <p>Few-shot promptの他にもLangChainで実装できる手法も存在するので、目を通してみましょう。</p>
+                <div><!-- コラム:強化学習とは --></div>
+              </div>
+            </section>
+          </section>
+        </section>
+      </section>
+      <section class="level2" aria-labelledby="output-parsers---出力を構造化する">
+        <div class="secheader"><h2 id="h2_3">Output Parsers - 出力を構造化する</h2><p><span class="hashtag">#出力の解析／#OutputParser</span><br>7ページでは結果をリスト形式で受け取りました。Output Parsersには、ほかにも便利な機能が用意されています。ここでは実際にどのような機能があるか見てみましょう</p></div>
+        
+        <section class="level3" aria-labelledby="結果を日時形式で受け取る">
+          <h3 id="h3_12">結果を日時形式で受け取る</h3>
+          <p>ここでは前の8で作成した「model_io.py」を編集し、結果を日時形式で受け取ってみましょう。［ファイル］メニューの［新規ファイル］から、「datetime_output_parser.py」というファイルを作成し、以下の通りに入力してください。</p>
+          <section class="level6" aria-labelledby="datetime_output_parserpy">
+            <h6 class="codenumber" id="h6_24">datetime_output_parser.py</h6>
+            <pre class="language-python"><code class="language-python"><span class="codenum-elem">001</span><span class="token keyword">from</span> langchain <span class="token keyword">import</span> PromptTemplate
+<span class="codenum-elem">002</span><span class="token keyword">from</span> langchain<span class="token punctuation">.</span>chat_models <span class="token keyword">import</span> ChatOpenAI
+<span class="codenum-elem">003</span><span class="token keyword">from</span> langchain<span class="token punctuation">.</span>output_parsers <span class="token keyword">import</span> DatetimeOutputParser  <span class="token comment codered"> Output ParserであるDatetimeOutputParserをインポート</span>
+<span class="codenum-elem">004</span><span class="token keyword">from</span> langchain<span class="token punctuation">.</span>schema <span class="token keyword">import</span> HumanMessage
+<span class="codenum-elem">005</span>
+<span class="codenum-elem">006</span>output_parser <span class="token operator">=</span> DatetimeOutputParser<span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token comment codered"> DatetimeOutputParserを初期化</span>
+<span class="codenum-elem">007</span>
+<span class="codenum-elem">008</span>chat <span class="token operator">=</span> ChatOpenAI<span class="token punctuation">(</span>model<span class="token operator">=</span><span class="token string">"gpt-3.5-turbo"</span><span class="token punctuation">,</span> <span class="token punctuation">)</span>
+<span class="codenum-elem">009</span>
+<span class="codenum-elem">010</span>prompt <span class="token operator">=</span> PromptTemplate<span class="token punctuation">.</span>from_template<span class="token punctuation">(</span><span class="token string">"{product}のリリース日を教えて"</span><span class="token punctuation">)</span> <span class="token comment codered"> リリース日を聞く</span>
+<span class="codenum-elem">011</span>
+<span class="codenum-elem">012</span>result <span class="token operator">=</span> chat<span class="token punctuation">(</span>
+<span class="codenum-elem">013</span>    <span class="token punctuation">[</span>
+<span class="codenum-elem">014</span>        HumanMessage<span class="token punctuation">(</span>content<span class="token operator">=</span>prompt<span class="token punctuation">.</span><span class="token builtin">format</span><span class="token punctuation">(</span>product<span class="token operator">=</span><span class="token string">"iPhone8"</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">,</span>  <span class="token comment codered"> iPhone8のリリース日を聞く</span>
+<span class="codenum-elem">015</span>        HumanMessage<span class="token punctuation">(</span>content<span class="token operator">=</span>output_parser<span class="token punctuation">.</span>get_format_instructions<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">,</span>  <span class="token comment codered"> output_parser.get_format_instructions()を実行し、言語モデルへの指示を追加する</span>
+<span class="codenum-elem">016</span>    <span class="token punctuation">]</span>
+<span class="codenum-elem">017</span><span class="token punctuation">)</span>
+<span class="codenum-elem">018</span>
+<span class="codenum-elem">019</span>output <span class="token operator">=</span> output_parser<span class="token punctuation">.</span>parse<span class="token punctuation">(</span>result<span class="token punctuation">.</span>content<span class="token punctuation">)</span> <span class="token comment codered"> 出力結果を解析して日時形式に変換する</span>
+<span class="codenum-elem">020</span>
+<span class="codenum-elem">021</span><span class="token keyword">print</span><span class="token punctuation">(</span>output<span class="token punctuation">)</span>
+<span class="codenum-elem">022</span>
+</code></pre>
+
+            <p>入力が完了したら以下のコマンドで実行します。</p>
+            <pre class="language-text"><code class="language-text">python3 datetime_output_parser.py</code></pre>
+
+            <p>すると以下のような表示されます。</p>
+            <pre class="language-text"><code class="language-text">2020-09-22 00:00:00</code></pre>
+
+            <p>「発売日は2020年9月22日です」のような文章による返答ではなく、日時形式で返答を受け取ることができました。</p>
+            <p>主な変更箇所を見てみましょう。6行目では言語モデルからの出力を日時形式へ変換するDatetimeOutputParserをインポートしています。</p>
+            <p>15行目では受け取りたいのは日時形式なのでプロンプトをリリース日を聞くように入力しています。</p>
+            <p>以上のようにOutput Parsersを変更することで取得できる構造化データが変更できることを確認できました。</p>
+          </section>
+        </section>
+        <section class="level3" aria-labelledby="出力形式を自分で定義する">
+          <h3 id="h3_13">出力形式を自分で定義する</h3>
+          <p>これまでのOutput parsersはLangChainで用意されているものでしたが、Output parsersは自分で作成する形式で受け取ることも可能です。「pydantic_output_parser.py」を新規作成し以下のように入力します。</p>
+          <section class="level6" aria-labelledby="pydantic_output_parserpy">
+            <h6 class="codenumber" id="h6_25">pydantic_output_parser.py</h6>
+            <pre class="language-python"><code class="language-python"><span class="codenum-elem">001</span><span class="token keyword">from</span> langchain<span class="token punctuation">.</span>chat_models <span class="token keyword">import</span> ChatOpenAI
+<span class="codenum-elem">002</span><span class="token keyword">from</span> langchain<span class="token punctuation">.</span>output_parsers <span class="token keyword">import</span> PydanticOutputParser
+<span class="codenum-elem">003</span><span class="token keyword">from</span> langchain<span class="token punctuation">.</span>schema <span class="token keyword">import</span> HumanMessage
+<span class="codenum-elem">004</span><span class="token keyword">from</span> pydantic <span class="token keyword">import</span> BaseModel<span class="token punctuation">,</span> Field<span class="token punctuation">,</span> validator
+<span class="codenum-elem">005</span>
+<span class="codenum-elem">006</span>chat <span class="token operator">=</span> ChatOpenAI<span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="codenum-elem">007</span>
+<span class="codenum-elem">008</span><span class="token keyword">class</span> <span class="token class-name">Smartphone</span><span class="token punctuation">(</span>BaseModel<span class="token punctuation">)</span><span class="token punctuation">:</span> <span class="token comment codered"> Pydanticのモデルを定義する</span>
+<span class="codenum-elem">009</span>    release_date<span class="token punctuation">:</span> <span class="token builtin">str</span> <span class="token operator">=</span> Field<span class="token punctuation">(</span>description<span class="token operator">=</span><span class="token string">"スマートフォンの発売日"</span><span class="token punctuation">)</span> <span class="token comment codered"> Fieldを使って説明を追加する</span>
+<span class="codenum-elem">010</span>    screen_inches<span class="token punctuation">:</span> <span class="token builtin">float</span> <span class="token operator">=</span> Field<span class="token punctuation">(</span>description<span class="token operator">=</span><span class="token string">"スマートフォンの画面サイズ(インチ)"</span><span class="token punctuation">)</span>
+<span class="codenum-elem">011</span>    os_installed<span class="token punctuation">:</span> <span class="token builtin">str</span> <span class="token operator">=</span> Field<span class="token punctuation">(</span>description<span class="token operator">=</span><span class="token string">"スマートフォンにインストールされているOS"</span><span class="token punctuation">)</span>
+<span class="codenum-elem">012</span>    model_name<span class="token punctuation">:</span> <span class="token builtin">str</span> <span class="token operator">=</span> Field<span class="token punctuation">(</span>description<span class="token operator">=</span><span class="token string">"スマートフォンのモデル名"</span><span class="token punctuation">)</span>
+<span class="codenum-elem">013</span>
+<span class="codenum-elem">014</span>    <span class="token decorator annotation punctuation">@validator</span><span class="token punctuation">(</span><span class="token string">"screen_inches"</span><span class="token punctuation">)</span> <span class="token comment codered"> validatorを使って値を検証する</span>
+<span class="codenum-elem">015</span>    <span class="token keyword">def</span> <span class="token function">validate_screen_inches</span><span class="token punctuation">(</span>cls<span class="token punctuation">,</span> field<span class="token punctuation">)</span><span class="token punctuation">:</span> <span class="token comment codered"> validatorの引数には、検証するフィールドと値が渡される</span>
+<span class="codenum-elem">016</span>        <span class="token keyword">if</span> field <span class="token operator">&lt;=</span> <span class="token number">0</span><span class="token punctuation">:</span> <span class="token comment codered"> screen_inchesが0以下の場合はエラーを返す</span>
+<span class="codenum-elem">017</span>            <span class="token keyword">raise</span> ValueError<span class="token punctuation">(</span><span class="token string">"Screen inches must be a positive number"</span><span class="token punctuation">)</span>
+<span class="codenum-elem">018</span>        <span class="token keyword">return</span> field
+<span class="codenum-elem">019</span>
+<span class="codenum-elem">020</span>parser <span class="token operator">=</span> PydanticOutputParser<span class="token punctuation">(</span>pydantic_object<span class="token operator">=</span>Smartphone<span class="token punctuation">)</span> <span class="token comment codered"> PydanticOutputParserをSmartPhoneモデルで初期化する</span>
+<span class="codenum-elem">021</span>
+<span class="codenum-elem">022</span>result <span class="token operator">=</span> chat<span class="token punctuation">(</span><span class="token punctuation">[</span> <span class="token comment codered"> チャットモデルにHumanMessageを渡して、文章を生成する</span>
+<span class="codenum-elem">023</span>    HumanMessage<span class="token punctuation">(</span>content<span class="token operator">=</span><span class="token string">"Androidでリリースしたスマートフォンを1個挙げて"</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+<span class="codenum-elem">024</span>    HumanMessage<span class="token punctuation">(</span>content<span class="token operator">=</span>parser<span class="token punctuation">.</span>get_format_instructions<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+<span class="codenum-elem">025</span><span class="token punctuation">]</span><span class="token punctuation">)</span>
+<span class="codenum-elem">026</span>
+<span class="codenum-elem">027</span>parsed_result <span class="token operator">=</span> parser<span class="token punctuation">.</span>parse<span class="token punctuation">(</span>result<span class="token punctuation">.</span>content<span class="token punctuation">)</span> <span class="token comment codered"> PydanticOutputParserを使って、文章をパースする</span>
+<span class="codenum-elem">028</span>
+<span class="codenum-elem">029</span><span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string-interpolation"><span class="token string">f"モデル名: </span><span class="token interpolation"><span class="token punctuation">{</span>parsed_result<span class="token punctuation">.</span>model_name<span class="token punctuation">}</span></span><span class="token string">"</span></span><span class="token punctuation">)</span>
+</code></pre>
+
+            <p>ここではPydanticOutputParserを使ってOutput Parsersを作成しています。</p>
+            <p>PydanticOutputParserは、言語モデルの出力をPydanticモデルに基づいてパースするための便利なツールです。PydanticはPythonでデータ検証を行うライブラリで、型ヒントを使ってデータモデルを定義し、そのモデルに基づいてデータの解析と検証を行います。</p>
+            <p>PydanticOutputParserを使うメリットは以下の通りです。</p>
+            <ul>
+              <li>任意のデータ構造を表現できるPydanticモデルを使ってパースルールを柔軟に定義できる</li>
+              <li>モデルの検証機能を活用して、パースしたデータの整合性を保証できる</li>
+              <li>開発者がPydanticに明示的に定義したデータ構造に解析結果を合わせることができる</li>
+              <li>パース結果をPythonオブジェクトとして簡単に取得でき、後続の処理で活用できる</li>
+            </ul>
+            <p>上記コードのSmartphoneクラスは、PydanticのBaseModelを継承したクラスで、スマートフォンの情報を表現するデータモデルです。このモデルは、スマートフォンの発売日（release_date）、画面サイズ（screen_inches）、インストールされているOS（os_installed）、モデル名（model_name）といった情報を持ちます。これらは、型ヒントを使用して定義され、さらにFieldを使ってそれぞれのフィールドの説明を追加しています。</p>
+            <p>そして、Pydanticのvalidatorを使ってscreen_inchesの値が0より大きいことを確認する検証処理を追加しています。これにより、データをパースする際にscreen_inchesの値が0以下であればエラーが発生します。</p>
+            <p>21行目ではPydanticOutputParserの初期化し、そのpydantic_objectパラメータに9行目で定義したSmartphoneクラスを渡しています。これにより、チャットモデルからの出力をSmartphoneモデルに基づいて解析できます。</p>
+            <p>解析は28行目のparser.parse(result.content)で行われ、チャットモデルからの出力（result.content）をSmartphoneモデルに基づいて解析します。結果はparsed_resultに格納され、その各フィールド（model_name、screen_inches、os_installed、release_date）にアクセスすることで、パースした結果を取得できます。</p>
+            <p>実際に以下コマンドで上記のソースコードを実行してみましょう。</p>
+            <pre class="language-text"><code class="language-text">python3 pydantic_output_parser.py</code></pre>
+
+            <p>すると以下のような出力を確認できます。</p>
+            <pre class="language-text"><code class="language-text">モデル名: Samsung Galaxy S22
+画面サイズ: 6.7インチ
+OS: Android 12
+スマートフォンの発売日: 2022-01-01</code></pre>
+
+            <p>この出力はチャットモデルから生成されたメッセージをSmartphoneモデルに基づいて解析した結果です。スマートフォンのモデル名、画面サイズ、インストールされているOS、発売日といった情報が適切に取得できています。</p>
+            <p>このように、PydanticOutputParserは特定の情報を持ったテキストを解析する際に役に立ちます。特に、一定のフォーマットを持ったテキストを解析する必要がある場合や、特定の情報を抽出したい場合に便利です。</p>
+            <p>たとえば、商品情報を持ったテキストを解析して各商品の詳細情報を取得したり、天気予報のテキストから特定の日の天気を抽出したりすることが可能です。さらに、Pydanticの検証機能を使えば、解析したデータの正確性も確保できます。</p><!-- それでは、さらなる応用例として、商品のレビューを解析するためのPydanticModelを作成し、そのレビューから評価やコメントを抽出する例を考えてみましょう。
+            
+            ###### custom_output_parser.py{.codenumber}
+            ```python
+            from langchain.chat_models import ChatOpenAI
+            from langchain.schema import (
+                HumanMessage
+            )
+            from langchain.output_parsers import PydanticOutputParser
+            from pydantic import BaseModel, Field
+            
+            chat = ChatOpenAI()
+            
+            class Review(BaseModel): #← Pydanticのモデルを定義する
+                product_name: str = Field(description="商品名")
+                rating: float = Field(description="評価")
+                comment: str = Field(description="コメント")
+            
+            parser = PydanticOutputParser(pydantic_object=Review) #← PydanticOutputParserをReviewモデルで初期化する
+            
+            result = chat([ #← チャットモデルにHumanMessageを渡して、文章を生成する
+                HumanMessage(content="日本語で架空のスマートフォンへのレビューを書いて"),
+                HumanMessage(content=parser.get_format_instructions())
+            ])
+            
+            parsed_result = parser.parse(result.content) #← PydanticOutputParserを使って、文章をパースする
+            
+            print(f"商品名: {parsed_result.product_name}")
+            print(f"評価: {parsed_result.rating}")
+            print(f"コメント: {parsed_result.comment}")
+            ```
+            
+            このコードを実行すると、たとえば以下のような出力が得られます
+            
+            ```
+            商品名: スマートフォンX
+            評価: 4.5
+            コメント: このスマートフォンはとても優れています。デザインが美しく、操作もスムーズです。カメラの性能も抜群で、写真が鮮明に撮影できます。また、バッテリーの持ちも長く、一日中利用しても問題ありません。ただ、少し重いと感じることがあるので、持ち運びには少し不便かもしれません。全体的に満足度は高いです。
+            
+            ```
+            
+            このように、PydanticOutputParserを使えば、生成されたテキストから特定の情報を抽出し、それを利用してアプリケーションの開発を効率的に進めることが可能になります。 -->
+          </section>
+        </section>
+        <section class="level3" aria-labelledby="誤った結果が返されたときに修正を指示できるようにする">
+          <h3 id="h3_14">誤った結果が返されたときに修正を指示できるようにする</h3>
+          <p>今まで紹介したOutput Parsersでは出力形式の指示をする処理と解析をする処理が存在し、言語モデルが出力への指示にきちんと答えらているという前提でした。</p>
+          <p>ですが、言語モデルは従来の手続き型プログラミングと異なり、必ず指示を守れるとは限りません。</p>
+          <p>たとえば、9ページの「リスト形式で結果を受け取る」でのコードだと言語モデルが["iPhone", "Macbook", "iPad"]のような形式で結果を出力することで解析が可能になり、for文で結果を1つずつ取り出せるようになっていました。しかし、必要ない文章や、形式が若干異なる結果を返すことがあります。そのような結果が返されると今まで紹介したコードでは解析する処理（parser.parse()）の行でエラーが起きてしまいます。</p>
+          <p>実際のアプリケーション開発ではこのようなエラーが発生するのは避けるべきですが、このような問題を解決するためのOutput Parsersも用意されています。先ほど作成したpydantic_output_parser.pyをもとに実際にコードを書いて動きを見ていきましょう。</p>
+          <section class="level6" aria-labelledby="pydantic_output_parserpy-1">
+            <h6 class="codenumber" id="h6_26">pydantic_output_parser.py</h6>
+            <pre class="language-python"><code class="language-python"><span class="codenum-elem">001</span><span class="token keyword">from</span> langchain<span class="token punctuation">.</span>chat_models <span class="token keyword">import</span> ChatOpenAI
+<span class="codenum-elem">002</span><span class="token keyword">from</span> langchain<span class="token punctuation">.</span>output_parsers <span class="token keyword">import</span> OutputFixingParser  <span class="token comment codered">OutputFixingParserを追加</span>
+<span class="codenum-elem">003</span><span class="token keyword">from</span> langchain<span class="token punctuation">.</span>output_parsers <span class="token keyword">import</span> PydanticOutputParser
+<span class="codenum-elem">004</span><span class="token keyword">from</span> langchain<span class="token punctuation">.</span>schema <span class="token keyword">import</span> HumanMessage
+<span class="codenum-elem">005</span><span class="token keyword">from</span> pydantic <span class="token keyword">import</span> BaseModel<span class="token punctuation">,</span> Field<span class="token punctuation">,</span> validator
+<span class="codenum-elem">006</span>
+<span class="codenum-elem">007</span>chat <span class="token operator">=</span> ChatOpenAI<span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="codenum-elem">008</span>
+<span class="codenum-elem">009</span><span class="token keyword">class</span> <span class="token class-name">Smartphone</span><span class="token punctuation">(</span>BaseModel<span class="token punctuation">)</span><span class="token punctuation">:</span>
+<span class="codenum-elem">010</span>    release_date<span class="token punctuation">:</span> <span class="token builtin">str</span> <span class="token operator">=</span> Field<span class="token punctuation">(</span>description<span class="token operator">=</span><span class="token string">"スマートフォンの発売日"</span><span class="token punctuation">)</span>
+<span class="codenum-elem">011</span>    screen_inches<span class="token punctuation">:</span> <span class="token builtin">float</span> <span class="token operator">=</span> Field<span class="token punctuation">(</span>description<span class="token operator">=</span><span class="token string">"スマートフォンの画面サイズ(インチ)"</span><span class="token punctuation">)</span>
+<span class="codenum-elem">012</span>    os_installed<span class="token punctuation">:</span> <span class="token builtin">str</span> <span class="token operator">=</span> Field<span class="token punctuation">(</span>description<span class="token operator">=</span><span class="token string">"スマートフォンにインストールされているOS"</span><span class="token punctuation">)</span>
+<span class="codenum-elem">013</span>    model_name<span class="token punctuation">:</span> <span class="token builtin">str</span> <span class="token operator">=</span> Field<span class="token punctuation">(</span>description<span class="token operator">=</span><span class="token string">"スマートフォンのモデル名"</span><span class="token punctuation">)</span>
+<span class="codenum-elem">014</span>
+<span class="codenum-elem">015</span>    <span class="token decorator annotation punctuation">@validator</span><span class="token punctuation">(</span><span class="token string">"screen_inches"</span><span class="token punctuation">)</span>
+<span class="codenum-elem">016</span>    <span class="token keyword">def</span> <span class="token function">validate_screen_inches</span><span class="token punctuation">(</span>cls<span class="token punctuation">,</span> field<span class="token punctuation">)</span><span class="token punctuation">:</span>
+<span class="codenum-elem">017</span>        <span class="token keyword">if</span> field <span class="token operator">&lt;=</span> <span class="token number">0</span><span class="token punctuation">:</span>
+<span class="codenum-elem">018</span>            <span class="token keyword">raise</span> ValueError<span class="token punctuation">(</span><span class="token string">"Screen inches must be a positive number"</span><span class="token punctuation">)</span>
+<span class="codenum-elem">019</span>        <span class="token keyword">return</span> field
+<span class="codenum-elem">020</span>
+<span class="codenum-elem">021</span>
+<span class="codenum-elem">022</span>parser <span class="token operator">=</span> OutputFixingParser<span class="token punctuation">.</span>from_llm<span class="token punctuation">(</span>  <span class="token comment codered"> OutputFixingParserを使用するように書き換え</span>
+<span class="codenum-elem">023</span>    parser<span class="token operator">=</span>PydanticOutputParser<span class="token punctuation">(</span>pydantic_object<span class="token operator">=</span>Smartphone<span class="token punctuation">)</span><span class="token punctuation">,</span>  <span class="token comment codered"> parserを設定</span>
+<span class="codenum-elem">024</span>    llm<span class="token operator">=</span>chat  <span class="token comment codered"> 修正に使用する言語モデルを設定</span>
+<span class="codenum-elem">025</span><span class="token punctuation">)</span>
+<span class="codenum-elem">026</span>
+<span class="codenum-elem">027</span>result <span class="token operator">=</span> chat<span class="token punctuation">(</span><span class="token punctuation">[</span>HumanMessage<span class="token punctuation">(</span>content<span class="token operator">=</span><span class="token string">"Androidでリリースしたスマートフォンを1個挙げて"</span><span class="token punctuation">)</span><span class="token punctuation">,</span> HumanMessage<span class="token punctuation">(</span>content<span class="token operator">=</span>parser<span class="token punctuation">.</span>get_format_instructions<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">]</span><span class="token punctuation">)</span>
+<span class="codenum-elem">028</span>
+<span class="codenum-elem">029</span>parsed_result <span class="token operator">=</span> parser<span class="token punctuation">.</span>parse<span class="token punctuation">(</span>result<span class="token punctuation">.</span>content<span class="token punctuation">)</span>
+<span class="codenum-elem">030</span>
+<span class="codenum-elem">031</span><span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string-interpolation"><span class="token string">f"モデル名: </span><span class="token interpolation"><span class="token punctuation">{</span>parsed_result<span class="token punctuation">.</span>model_name<span class="token punctuation">}</span></span><span class="token string">"</span></span><span class="token punctuation">)</span>
+<span class="codenum-elem">032</span><span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string-interpolation"><span class="token string">f"画面サイズ: </span><span class="token interpolation"><span class="token punctuation">{</span>parsed_result<span class="token punctuation">.</span>screen_inches<span class="token punctuation">}</span></span><span class="token string">インチ"</span></span><span class="token punctuation">)</span>
+<span class="codenum-elem">033</span><span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string-interpolation"><span class="token string">f"OS: </span><span class="token interpolation"><span class="token punctuation">{</span>parsed_result<span class="token punctuation">.</span>os_installed<span class="token punctuation">}</span></span><span class="token string">"</span></span><span class="token punctuation">)</span>
+<span class="codenum-elem">034</span><span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string-interpolation"><span class="token string">f"スマートフォンの発売日: </span><span class="token interpolation"><span class="token punctuation">{</span>parsed_result<span class="token punctuation">.</span>release_date<span class="token punctuation">}</span></span><span class="token string">"</span></span><span class="token punctuation">)</span>
+<span class="codenum-elem">035</span>
+</code></pre>
+
+            <p>
+              コードの変更箇所だけ見ていきましょう。
+              2行目ではOutputFixingParserをインポートしています。OutputFixingParserは先ほど説明した誤った結果を出力したら再実行するためのOutput Parsersです。
+            </p>
+            <p>22行目でOutputFixingParserを初期化しています。OutputFixingParserはOutput ParsersのリトライをするためのOutput Parsersなので、23行目のようにリトライする対象のOutput Parsersを入力する必要があります。</p>
+            <p>24行目はリトライするために使用するLanguage Modelsを設定します。</p>
+            <p>あとは、同じように実行することで失敗したときにのみ再実行が行われるようになります。</p>
+          </section>
+        </section>
+      </section>
+    </section>
+  
+
+</body></html>

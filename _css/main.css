@@ -1,0 +1,537 @@
+@charset "UTF-8";
+
+/* フォントはcss/fontsフォルダのファイルを直接参照 */
+@font-face {
+  font-family: keyfont;
+  src: url("fonts/keyboard-JP-Regular.otf");
+}
+@font-face {
+  font-family: notosans-vf;
+  src: url("fonts/NotoSansJP-VF.otf");
+}
+@font-face {
+  font-family: udevgothic;
+  src: url("fonts/UDEVGothic-Regular.ttf");
+}
+
+/*リセット*/
+html {
+  orphans: 1;
+  widows: 1;
+  /* font-size: 0.25mm; */
+  /*qで級数指定できる*/
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/*ページサイズ
+今回はcss paged mediaで指定
+*/
+@page {
+  /*A5*/
+  size: 148mm 210mm;
+  /* bleed: 3mm; */
+  /* トンボ （印刷所指定により今回はナシ） */
+  /* marks: cross crop; */
+  /*基本のマージン（左右で変えるときは別に指定）*/
+  margin: 15mm 18mm 18mm 16mm;
+
+  @bottom-center {
+    content: counter(page);
+    margin-top: 3.5mm;
+    height: 12Q;
+    width: 8mm;
+    font-size: 12Q;
+  }
+
+  @bottom-right {
+    content: string(chapter-title, first);
+    margin-top: 3.5mm;
+    font-size: 10Q;
+    height: 12Q;
+  }
+}
+
+:root {
+  font-family: notosans-vf;
+  font-size: 12Q;
+  line-height: 20Q;
+  counter-reset: header2;
+}
+
+body {
+  width: 114mm;
+  /* background: #FFE; */
+  position: relative;
+  font-family: notosans-r;
+}
+
+/* 強制改ページ指定*/
+.pagebreak {
+  visibility: hidden;
+  page-break-after: always;
+}
+
+h1 {
+  font-size: 48Q;
+  line-height: 52Q;
+  string-set: chapter-title content();
+}
+.coverpage {
+  break-before: recto;
+  width: 120mm;
+  height: 142mm;
+  /* margin-left: -18.5mm;
+    margin-top: -18mm; */
+  background: #3da8c9;
+  padding: 15mm;
+}
+h2 {
+  font-size: 27Q;
+  line-height: 35Q;
+  text-align: left;
+  margin-right: 4mm;
+  margin-left: 20mm;
+}
+h2::before {
+  content: counter(header2, decimal-leading-zero);
+  counter-increment: header2;
+  position: absolute;
+  font-size: 32Q;
+  top: 0;
+  left: 4mm;
+  background: #cdf2fd;
+  color: #3da8c9;
+}
+.secheader {
+  break-before: page;
+  height: 38mm;
+  width: 114mm;
+  position: relative;
+  margin-top: -5mm;
+}
+.secheader p {
+  font-size: 10Q;
+  line-height: 15Q;
+  text-indent: 0;
+  margin: 4mm 4mm 4mm 20mm;
+}
+
+h3 {
+  font-size: 15Q;
+  line-height: 10mm;
+  width: 114mm;
+  height: 10mm;
+  margin-top: 5mm;
+  margin-bottom: 3mm;
+  border: solid 0.5mm #3da8c9;
+  color: #3da8c9;
+}
+.pagebreak + h3 {
+  margin-top: 4mm;
+}
+
+/* 小見出し */
+h4 {
+  font-size: 12Q;
+  font-weight: bold;
+  line-height: 20Q;
+  margin-top: 5mm;
+  margin-bottom: 1mm;
+  color: #3da8c9;
+}
+pre + h4 {
+  margin-top: 8mm;
+}
+
+.pagebreak + h4 {
+  margin-top: 2mm;
+}
+
+/* 表見出し */
+h5 {
+  font-size: 12Q;
+  font-weight: bold;
+  line-height: 22Q;
+  margin-top: 5mm;
+  color: #777;
+}
+
+/* コード見出し */
+h6 {
+  font-size: 12Q;
+  font-weight: bold;
+  line-height: 20Q;
+  margin-top: 5mm;
+  color: #777;
+}
+h6::before {
+  content: "・";
+}
+.pagebreak + h6 {
+  margin-top: 0;
+}
+
+p {
+  text-align: justify;
+  font-size: 12Q;
+  line-height: 20Q;
+  text-indent: 1em;
+}
+.pagebreak + p {
+  margin-top: 4mm;
+}
+
+ol,
+ul {
+  margin-left: 4mm;
+  margin-top: 4mm;
+  margin-bottom: 4mm;
+}
+ol ol,
+ul ul {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+li {
+  font-size: 12Q;
+  line-height: 20Q;
+}
+
+strong {
+  background: #baefff;
+}
+
+/* 表 */
+table {
+  border-collapse: collapse;
+  font-size: 10Q;
+  line-height: 14Q;
+}
+td,
+th {
+  border: solid 0.5mm #888;
+  padding: 1mm 1.5mm;
+  min-width: 6em;
+}
+
+th {
+  font-family: notosans-m;
+  color: #ffffff;
+  background-color: #3da8c9;
+}
+table + p {
+  margin-top: 5mm;
+}
+
+/* ソースコード */
+pre {
+  font-size: 12Q;
+  line-height: 4mm;
+  background: #cdf2fd;
+  /* background-size: 19mm 19mm; */
+  /* background-position: 0 1.5mm; */
+  margin-top: 1mm;
+  margin-bottom: 5mm;
+  padding: 6Q;
+  overflow: visible;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  font-family: udevgothic, notosans-r, monospace;
+  border-top: solid 0.3mm #666;
+  border-bottom: solid 0.3mm #666;
+}
+.codenum-elem {
+  display: inline-block;
+  width: 2em;
+  color: #888;
+}
+
+p + pre {
+  margin-top: 4mm;
+}
+
+pre code {
+  font-family: udevgothic, notosans-r, monospace;
+}
+
+p code {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+/* コード内引き出し線 */
+.codered {
+  /* background: #fff; */
+  font-size: 10Q;
+  line-height: 12Q;
+  position: relative;
+  /* border: solid 0.15mm #f88; */
+  color: #f00;
+  font-weight: bold;
+  padding: 0 1mm 0.5mm 1mm;
+}
+.codered::before {
+  content: "";
+  display: block;
+  position: absolute;
+  width: 5mm;
+  top: 1mm;
+  left: -5mm;
+  border-bottom: dashed 0.25mm #f88;
+}
+
+kbd {
+  font-family: keyfont;
+}
+
+/* 図版領域 */
+.figure {
+  display: flex;
+  flex-direction: row;
+  /*横並びにする*/
+  align-items: flex-start;
+  justify-content: flex-start;
+  /*縦に伸ばさない*/
+  flex-wrap: wrap;
+  position: relative;
+  margin-top: 5mm;
+  margin-bottom: 5mm;
+}
+.figure img,
+.figure svg {
+  border: solid 0.5mm #ccc;
+}
+/* キャプション */
+.figure p {
+  text-indent: 0;
+  font-weight: bold;
+  font-size: 12Q;
+  /* line-height: 14q;
+    margin-top: 0.75mm;
+    font-size: 10q;
+    width: 100%;
+    text-align: center; */
+}
+.figure ul {
+  position: absolute;
+  font-size: 11Q;
+  width: 12em;
+  right: 0;
+  list-style: none;
+  margin: 0;
+}
+.figure li {
+  font-size: 11Q;
+  line-height: 16Q;
+  border: solid 0.25mm #f00;
+  background: rgba(255, 255, 255, 0.7);
+  margin-bottom: 2mm;
+  padding: 0.25mm;
+}
+
+h6 + .figure {
+  margin-top: 2mm;
+}
+
+/* ポイント */
+.point {
+  border: solid 0.2mm #333;
+  border-right: none;
+  border-left: none;
+  padding: 4mm;
+  padding-right: 6mm;
+  padding-left: 6mm;
+  margin-top: 6mm;
+  margin-right: auto;
+  margin-left: auto;
+  width: 114mm;
+  background: #cdf2fd;
+}
+.point h4 {
+  text-align: center;
+  margin-top: 0;
+  font-size: 13Q;
+  color: #3da8c9;
+}
+.point ul {
+  margin-top: 1mm;
+  margin-bottom: 1mm;
+}
+.point p {
+  font-size: 11Q;
+  text-indent: 0;
+  line-height: 20Q;
+}
+.point td {
+  background: #fff;
+}
+
+.point h4::before {
+  content: "point";
+  padding-right: 2mm;
+  padding-left: 2mm;
+  margin-right: 2mm;
+  border: solid 0.2mm #87cefa;
+  background: #87cefa;
+  color: #ffffff;
+}
+
+/* ショートカットキー */
+.shortcut {
+  border-top: solid 0.5mm #000;
+  border-bottom: solid 0.5mm #000;
+  font-size: 11Q;
+  font-weight: bold;
+  margin: 4mm 0;
+  padding: 1mm 0;
+  background: #fff;
+}
+.shortcut h4 {
+  display: inline-block;
+  margin-top: 0;
+  font-size: 11Q;
+  background: #eee;
+  color: #333;
+}
+.shortcut p {
+  font-size: 11Q;
+  display: inline-block;
+  color: #333;
+}
+.point .shortcut {
+  margin-bottom: 0mm;
+}
+
+/* URL */
+.url {
+  text-indent: 0;
+  font-size: 10Q;
+}
+.figure + .url {
+  margin-top: -5mm;
+}
+
+/* ハッシュタグ */
+.hashtag {
+  text-indent: 0;
+  right: -8em;
+  font-size: 11Q;
+  line-height: 13Q;
+  color: #3da8c9;
+  font-weight: bold;
+}
+
+/*コラム*/
+.two_column {
+  column-count: 2;
+}
+.two_column p {
+  text-indent: 0;
+}
+
+/*編集コメント（サイドバー表示）*/
+span.comment:not(.token) {
+  position: absolute;
+  display: block;
+  text-indent: 0;
+  right: -8em;
+  font-size: 8Q;
+  line-height: 13Q;
+  background: #ff0;
+  color: #f00;
+  width: 8em;
+  border: solid 0.25mm #f80;
+  font-family: notosans-r;
+}
+/*編集コメント（長文用）*/
+.hen,
+.hen p {
+  font-size: 10Q;
+  line-height: 3mm;
+  background: #ff0;
+  color: #f00;
+  text-indent: 0;
+}
+
+/* ページタイトル */
+#pagetitle {
+  display: none;
+}
+
+/*ファイル名*/
+.file {
+  font-size: 11Q;
+  margin-top: 4mm;
+  margin-bottom: 4mm;
+  border: solid 0.5mm;
+}
+
+/* dockerコマンドパーツ */
+.command {
+  border-top: solid 0.5mm #000;
+  border-bottom: solid 0.5mm #000;
+  font-size: 12Q;
+  font-weight: bold;
+  /* 上 | 右 | 下 | 左 */
+  margin: 1mm 0 3mm 0;
+  padding: 1mm 1mm;
+  background: #fff;
+  font-family: udevgothic, notosans-r, monospace;
+}
+
+/*
+{
+ "f": "《folder》",
+ "r": "<image src=\"./_css/img/foldericon.png\" />"
+},
+{
+"f": "《icon》",
+"r": "--------------"
+}*/
+
+/* コラム */
+.column {
+  border: solid 0.2mm #87cefa;
+  border-radius: 10px;
+  padding: 4mm;
+  padding-right: 6mm;
+  padding-left: 6mm;
+  margin-top: 6mm;
+  margin-right: auto;
+  margin-left: auto;
+  width: 114mm;
+  background: #e0ffff;
+}
+.column h4 {
+  margin-top: 0;
+  font-size: 13Q;
+  color: #3da8c9;
+}
+.column ul {
+  margin-top: 1mm;
+  margin-bottom: 1mm;
+}
+.column p {
+  font-size: 11Q;
+  text-indent: 0;
+  line-height: 20Q;
+}
+.column td {
+  background: #fff;
+}
+
+.column h4::before {
+  content: "column";
+  padding-right: 2mm;
+  padding-left: 2mm;
+  margin-right: 2mm;
+  border: solid 0.2mm #87cefa;
+  background: #87cefa;
+  color: #ffffff;
+}
