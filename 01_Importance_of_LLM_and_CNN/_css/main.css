@@ -91,8 +91,8 @@ h1 {
   padding: 15mm;
 }
 h2 {
-  font-size: 27Q;
-  line-height: 35Q;
+  font-size: 20Q;
+  line-height: 28Q;
   text-align: left;
   margin-right: 4mm;
   margin-left: 20mm;
@@ -117,8 +117,8 @@ h2::before {
 .secheader p {
   font-size: 10Q;
   line-height: 15Q;
-  text-indent: 0;
-  margin: 4mm 4mm 4mm 20mm;
+  text-indent: 0em;
+  margin: 4mm 4mm 4mm 8mm;
 }
 
 h3 {
@@ -128,6 +128,8 @@ h3 {
   height: 10mm;
   margin-top: 5mm;
   margin-bottom: 3mm;
+  margin-right: 0mm;
+  margin-left: 0mm;
   border: solid 0.5mm #3da8c9;
   color: #3da8c9;
 }
@@ -175,10 +177,10 @@ h6::before {
 .pagebreak + h6 {
   margin-top: 0;
 }
-
+/* 本文 */
 p {
   text-align: justify;
-  font-size: 12Q;
+  font-size: 12Q; /* 3ミリ */
   line-height: 20Q;
   text-indent: 1em;
 }
@@ -534,4 +536,32 @@ span.comment:not(.token) {
   border: solid 0.2mm #87cefa;
   background: #87cefa;
   color: #ffffff;
+}
+
+html { counter-reset: footnote; }
+@media print {
+  /* 脚注本体の書式 */
+  .footnote {
+    float: footnote; /* CSSでページ下部に脚注を置くための設定 */
+    font-size: 10Q; /* フォントは小さくしたい */
+    line-height: 14Q;
+    counter-increment: footnote;
+    text-indent: 0em;
+    text-align: justify;
+  }
+  /* 脚注本体の行頭に[<数字>]を挿入する */
+  .footnote::footnote-marker {
+    content: "[" counter(footnote) "]";
+    font-size: 10Q;
+    display: inline;
+    vertical-align: super;
+  }
+  /* 脚注の参照元にリンクを作成する */
+  .footnote::footnote-call {
+    content: "[" counter(footnote) "]";
+    font-size: 8Q;
+    vertical-align: super;
+    display: inline;
+    line-height: 1;
+  }
 }

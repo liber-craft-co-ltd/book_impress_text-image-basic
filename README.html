@@ -1,0 +1,194 @@
+<!DOCTYPE html><html><head>
+    <meta charset="utf-8">
+    <title></title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+  </head>
+  <body>
+    <section class="level1" aria-labelledby="インプレス社langchain完全入門readme">
+      <h1 id="h1_0">インプレス社LangChain完全入門README</h1>
+      <section class="level2" aria-labelledby="紙面プレビューの準備">
+        <h2 id="h2_0">■■紙面プレビューの準備</h2>
+        <p>VSCode用拡張機能を使うことで、紙面と分量感がほぼ同じプレビューを見ながら執筆・編集することができます。</p>
+        <figure>
+          <img src="docimg2.png" alt="VFM-MDBPによるプレビューの様子">
+          <figcaption aria-hidden="true">VFM-MDBPによるプレビューの様子</figcaption>
+        </figure>
+        <p>Node.jsとVSCode用拡張機能、Vivliostyle.jsのインストールが必要です。インストール方法については下記ページから表示できる<strong>書籍プレビューの26ページ以降</strong>で説明しています。ただし、インストールする機能拡張は、vivliostyle-cli-helperではなく、<strong>vfm_mdbp_vscode</strong>にしてください。Vivliostyle.jsのインストールは、vfm_mdbp_vscodeの右クリックメニューから行えます。</p>
+        <p><a href="https://libroworks.co.jp/?p=6956">https://libroworks.co.jp/?p=6956</a></p>
+        <p>操作方法は、書籍で説明しているvivliostyle-cli-helperとほとんど同じで、コードに行番号を付ける機能や画像をトリミングする機能が追加されています。</p>
+        <figure>
+          <img src="docimg1.png" alt="VFM-MDBPインストール画面">
+          <figcaption aria-hidden="true">VFM-MDBPインストール画面</figcaption>
+        </figure>
+        <p><a href="https://marketplace.visualstudio.com/items?itemName=Libroworks.vfmdbp-vscode">https://marketplace.visualstudio.com/items?itemName=Libroworks.vfmdbp-vscode</a></p>
+        <p>サンプルとして「Docker完全入門」の1章のMarkdownファイルを入れています（30_genkou/chap1.md）。インストール後に右クリックして［vfmbookpreview］→［これプレビューvivliostyle preview (Current File)］を選択すると、プレビューが表示されます。</p>
+        <figure>
+          <img src="docimg3.png" alt="VFM-MDBPによるプレビューの様子">
+          <figcaption aria-hidden="true">VFM-MDBPによるプレビューの様子</figcaption>
+        </figure>
+      </section>
+      <section class="level2" aria-labelledby="markdownのルール">
+        <h2 id="h2_1">■■Markdownのルール</h2>
+        <p>ファイルの先頭にあるこれ（frontmatter）はCSSファイルを読み込む指示なので、カットしないでください。</p>
+        <pre class="language-text"><code class="language-text">---
+link:
+  - rel: 'stylesheet'
+    href: '_css/main.css'
+lang: 'ja'
+---
+
+
+# 1章 なぜ開発用サーバーが必要なのか？</code></pre>
+
+        <section class="level3" aria-labelledby="見出し">
+          <h3 id="h3_0">■見出し</h3>
+          <p>見出し類（h1～h6）は、以下の役割があります。</p>
+          <table>
+            <thead>
+              <tr>
+                <th>見出し</th>
+                <th>Markdown表記</th>
+                <th>役割</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>h1</td>
+                <td>#</td>
+                <td>章タイトル（ファイルごとに1つ）</td>
+              </tr>
+              <tr>
+                <td>h2</td>
+                <td>##</td>
+                <td>節タイトル（直前で自動改ページされる）</td>
+              </tr>
+              <tr>
+                <td>h3</td>
+                <td>###</td>
+                <td>小見出し（青罫囲み）</td>
+              </tr>
+              <tr>
+                <td>h4</td>
+                <td>####</td>
+                <td>小小見出しまたはコラムタイトル（青文字）</td>
+              </tr>
+              <tr>
+                <td>h5</td>
+                <td>#####</td>
+                <td>未使用</td>
+              </tr>
+              <tr>
+                <td>h6</td>
+                <td>######</td>
+                <td>図表やコードの見出し</td>
+              </tr>
+            </tbody>
+          </table>
+          <p>h2見出しの直後の1段落は、リード文になります。また、@hashtag:～@hashtagendでリード文内にハッシュタグを書けます。</p>
+          <pre class="language-text"><code class="language-text">## Webアプリの仕組みについておさらいしよう
+本書はコンテナで簡単にサーバーを調達する方法を解説しますが、サーバーの必要性を理解するためにも、Webアプリの仕組みのおさらいから始めましょう。&lt;br&gt;
+@hashtag:#サーバー／#Webサイトの種類／#サーバーが必要な場面を考える@hashtagend</code></pre>
+
+        </section>
+        <section class="level3" aria-labelledby="ソースコード">
+          <h3 id="h3_1">■ソースコード</h3>
+          <p>コードの見出しに{.codenumber}を付けると、行番号入りのコード枠になります。また、コメント文の先頭文字を←（全角の右向きヤジルシ）にすると、引き出し線になります。</p>
+          <pre class="language-text"><code class="language-text">###### compose.yaml{.codenumber}
+```yml
+services:
+  db:     #← PostgreSQLコンテナ
+    image: postgres:14.2
+    environment:
+      POSTGRES_DB: testdb
+      POSTGRES_USER: testuser
+      POSTGRES_PASSWORD: testpass
+    volumes:
+      - db-data:/var/lib/postgresql/data
+  web:      #← Djangoコンテナ
+    build: .
+    depends_on:
+      - db
+    ports:
+      - "8000:8000"     #← ポート番号
+    volumes:
+      - .:/code   #← ボリューム
+volumes:          #← ボリュームの作成
+  db-data:
+```</code></pre>
+
+          <figure>
+            <img src="docimg4.png" alt="code with line number">
+            <figcaption aria-hidden="true">code with line number</figcaption>
+          </figure>
+        </section>
+        <section class="level3" aria-labelledby="画像や操作手順">
+          <h3 id="h3_2">■画像や操作手順</h3>
+          <p>操作手順を入れたい場合は、画像（<code>![](ファイル名)</code>）の前後を@div:figure～@divendで囲み、その中にリスト（箇条書き）を書きます（引き出し線はDTP段階で入れます）。</p>
+          <pre class="language-text"><code class="language-text">@div:figure
+![](img1/c5-7-4.png?svgimg=30,,50,,-9)
+- ❸Webブラウザで「`http://localhost:8000/`」へアクセス
+- ❹Djangoのトップページが表示される
+@divend
+</code></pre>
+
+          <figure>
+            <img src="docimg5.png" alt="code with line number">
+            <figcaption aria-hidden="true">code with line number</figcaption>
+          </figure>
+          <p>画像ファイル名のあとに<code>?svgimg=</code>を書くと、画像の拡大率の調整やトリミングができます。</p>
+          <pre class="language-text"><code class="language-text">![](img1/c5-7-4.png?svgimg=30,,50,,-9)
+
+?svgimg=拡大率,幅,高さ,Xシフト量,Yシフト量</code></pre>
+
+        </section>
+        <section class="level3" aria-labelledby="コラムとポイント枠">
+          <h3 id="h3_3">■コラムとポイント枠</h3>
+          <p>コラムとポイントは見出し周りのみHTMLタグで書いてください。HTMLタグのあと、1行空けてください（タグのあとは1行空けないとMarkdownモードに切り替わりません）。</p>
+          <pre class="language-text"><code class="language-text">&lt;div class="point"&gt;
+&lt;h4&gt;コンテナを学ぶための基礎知識&lt;/h4&gt;
+
+コンテナを使うにあたって、Webアプリ開発やネットワークに関する基礎的な用語を押さえておくと、学習しやすくなります。そのためここでは、基礎的な用語について紹介しておきましょう。
+……中略……
+
+&lt;/div&gt;</code></pre>
+
+          <pre class="language-text"><code class="language-text">&lt;div class="column"&gt;
+&lt;h4&gt;コラムタイトル&lt;/h4&gt;
+
+コラムテキスト
+
+&lt;div&gt;</code></pre>
+
+          <figure>
+            <img src="docimg6.png" alt="point and column">
+            <figcaption aria-hidden="true">point and column</figcaption>
+          </figure>
+        </section>
+        <section class="level3" aria-labelledby="改ページ指定">
+          <h3 id="h3_4">■改ページ指定</h3>
+          <p>水平線は改ページとして処理します。</p>
+          <pre class="language-text"><code class="language-text">
+---
+</code></pre>
+
+        </section>
+        <section class="level3" aria-labelledby="メモ">
+          <h3 id="h3_5">メモ</h3>
+          <ul>
+            <li>0.25mmを1Qで表記。ミリメートル表記と相性がいい。</li>
+            <li>Q数と、その主な用途
+              <ul>
+                <li>15Q以上 見出し類などに使うことが多い</li>
+                <li>14Q 子供向けの書籍など、大きめな文字サイズにしたいときに使う</li>
+                <li>13Q 標準的に本文で使われるサイズ。初心者向けの本などで少し大きめにしたいときに使う</li>
+                <li>12Q 標準的に本文で使われるサイズ。専門書など多少文字量を増やしたいときに使う</li>
+                <li>11Q 図版のキャプションなどに使う。本文に使うには小さい</li>
+              </ul>
+            </li>
+          </ul>
+        </section>
+      </section>
+    </section>
+  
+
+</body></html>

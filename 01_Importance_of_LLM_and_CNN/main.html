@@ -5,17 +5,14 @@
     <link rel="stylesheet" href="_css/main.css">
   </head>
   <body>
-    <section class="level1" aria-labelledby="2章-model-io-言語モデルを扱いやすくする">
-      <div class="coverpage"><h1 id="h1_0">2章 Model I/O 言語モデルを扱いやすくする</h1></div>
-      <section class="level2" aria-labelledby="言語モデルを使ったアプリケーションの基本的なしくみを理解する">
-        <div class="secheader"><h2 id="h2_0">言語モデルを使ったアプリケーションの基本的なしくみを理解する</h2><p>
-          <span class="hashtag">#チャットボット／#言語モデル</span><br>LangChainの最も基本的なモジュールであるModel I/Oは言語モデルを呼び出す方法を提供します。
-          具体的にどのようなことができるのかコードを書きつつ見ていきましょう
-        </p></div>
+    <section class="level1" aria-labelledby="1章-文章解析と画像解析の重要性">
+      <div class="coverpage"><h1 id="h1_0">1章<br>文章解析と画像解析の重要性</h1></div>
+      <section class="level2" aria-labelledby="生成aiなのになぜ文章解析と画像解析なのか">
+        <div class="secheader"><h2 id="h2_0">生成AIなのに、なぜ文章解析と画像解析なのか？</h2><p><span class="hashtag">#チャットボット／#言語モデル</span><br>人間が入力した自然文のリクエストに対して自然文で回答したり、対応する画像や動画、あるいは音声を生成する「生成AI」が数多く登場しています。文章や画像であれ、生成AIの中身はTransformer<span class="footnote">AIモデルの一種で、本書の5章で紹介します。</span>の登場以来、飛躍的な進歩を遂げており、昨今の研究では時空間を理解<span class="footnote">2023年10月にMIT（マサチューセッツ工科大学）が公開した論文によれば、大量のデータを学習したことによって我々が生活する空間や時間といった概念を構造的な知識（"world model"）として有しているとのこと。（<a href="https://doi.org/10.48550/arXiv.2310.02207%EF%BC%89">https://doi.org/10.48550/arXiv.2310.02207）</a></span>しているとの研究報告もあります。他人の頭を覗くことが出来ないように、生成AIの中身を理解する事は非常に困難ですが、どのように学習しているのかについて理解を深めることで<br></p></div>
         
         <section class="level3" aria-labelledby="言語モデルを呼び出すとは">
           <h3 id="h3_0">言語モデルを呼び出すとは</h3>
-          <p>改めて「言語モデルを呼び出す」とはどういうことでしょうか？</p>
+          <p>改めて「言語モデル<span class="footnote">プログラミング言語によっては変数の内容を変えられないルールもありますが、CSS Variable はユーザーが定義できる全ての変数が可変です。</span>。を呼び出す」とはどういうことでしょうか？</p>
           <p>ChatGPTなどWebサービスでは、テキストボックスにメッセージを入力し、送信ボタンをクリックすることで結果が出力されます。</p>
           <div class="figure">
             
