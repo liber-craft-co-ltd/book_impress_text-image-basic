@@ -1,0 +1,101 @@
+@charset "utf-8";
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap");
+
+* {
+  box-sizing: border-box;
+}
+
+@page {
+  size: A5;
+  margin-block: 15mm;
+  margin-inline: 15.5mm;
+}
+
+body {
+  font-size: 13Q;
+  line-height: 24Q;
+  font-family: "Noto Sans JP";
+  font-weight: 400;
+  text-spacing: auto;
+  widows: 1;
+  orphans: 1;
+}
+
+p {
+  font-size: 13Q;
+  line-height: 24Q;
+  text-indent: 1em;
+  text-align: justify;
+  margin-block: 0;
+}
+
+/* 吹き出し */
+.kaiwa-container {
+  margin-block: 8mm;
+  margin-inline: 0;
+  display: grid;
+}
+
+.kaiwa {
+  border: solid 0.25mm #000;
+  border-radius: 4mm;
+  margin-block: 1mm;
+  margin-inline: 21mm;
+  padding-block: 1mm;
+  padding-inline: 2mm;
+  font-size: 14Q;
+  line-height: 20Q;
+  text-indent: 0;
+  break-inside: avoid-page;
+  position: relative;
+  inline-size: fit-content;
+}
+.neko {
+  justify-self: end;
+}
+
+.kuma::after {
+  content: "";
+  position: absolute;
+  inset-inline-start: calc(-21mm + 0.6mm);
+  inset-block-start: -4mm;
+  inline-size: 21mm;
+  block-size: 14mm;
+}
+.kuma.think::after {
+  background: url("img/fukidashi-left.svg"), url("img/chara2-1.png");
+  background-repeat: no-repeat;
+  background-size: 5mm, 21mm;
+  background-position-x: 100%, 0%;
+  background-position-y: 6mm, -3mm;
+}
+.kuma.egao::after {
+  background: url("img/fukidashi-left.svg"), url("img/chara2-2.png");
+  background-repeat: no-repeat;
+  background-size: 5mm, 21mm;
+  background-position-x: 100%, 0%;
+  background-position-y: 6mm, -3mm;
+}
+
+.neko::after {
+  content: "";
+  position: absolute;
+  inset-inline-end: calc(-21mm + 0.6mm);
+  inset-block-start: -4mm;
+  inline-size: 21mm;
+  block-size: 14mm;
+}
+.neko.naki::after {
+  background: url("img/fukidashi-right.svg"), url("img/chara1-1.png");
+  background-repeat: no-repeat;
+  background-size: 5mm, 21mm;
+  background-position-x: 0%;
+  background-position-y: 6mm, -3mm;
+}
+.neko.hatena::after {
+  background: url("img/fukidashi-right.svg"), url("img/chara1-2.png");
+  background-repeat: no-repeat;
+  background-size: 5mm, 21mm;
+  background-position-x: 0%;
+  background-position-y: 6mm, -3mm;
+}

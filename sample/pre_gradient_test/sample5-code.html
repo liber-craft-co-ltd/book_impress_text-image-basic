@@ -1,0 +1,47 @@
+<!DOCTYPE html><html><head>
+    <meta charset="utf-8">
+    <title></title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="css/sample5-code.css">
+  </head>
+  <body>
+    <section class="level6" aria-labelledby="generate_tocpy">
+      <h6 id="h6_0" class="codelist">generate_toc.py</h6>
+      <div class="codeno"><pre class="language-py"><code class="language-py"><span class="token keyword">from</span> pathlib <span class="token keyword">import</span> Path
+<span class="token keyword">from</span> bs4 <span class="token keyword">import</span> BeautifulSoup
+
+result <span class="token operator">=</span> <span class="token string">'## 目次{#toc role="doc-toc"}\n'</span>
+
+current <span class="token operator">=</span> Path<span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="token keyword">for</span> target <span class="token keyword">in</span> current<span class="token punctuation">.</span>glob<span class="token punctuation">(</span><span class="token string">'chap*.html'</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+    <span class="token comment"># print(target)</span>
+    soup <span class="token operator">=</span> BeautifulSoup<span class="token punctuation">(</span>
+        target<span class="token punctuation">.</span>read_text<span class="token punctuation">(</span>encoding<span class="token operator">=</span><span class="token string">"utf-8"</span><span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token string">'html.parser'</span><span class="token punctuation">)</span>
+    targetpath <span class="token operator">=</span> <span class="token builtin">str</span><span class="token punctuation">(</span>target<span class="token punctuation">)</span><span class="token punctuation">.</span>replace<span class="token punctuation">(</span><span class="token string">'\\'</span><span class="token punctuation">,</span> <span class="token string">'/'</span><span class="token punctuation">)</span>
+    <span class="token comment"># h1～h3要素を取得</span>
+    elems <span class="token operator">=</span> soup<span class="token punctuation">.</span>find_all<span class="token punctuation">(</span><span class="token punctuation">[</span><span class="token string">'h1'</span><span class="token punctuation">,</span> <span class="token string">'h2'</span><span class="token punctuation">,</span> <span class="token string">'h3'</span><span class="token punctuation">]</span><span class="token punctuation">)</span>
+    <span class="token comment"># リスト生成</span>
+    <span class="token keyword">for</span> elem <span class="token keyword">in</span> elems<span class="token punctuation">:</span>
+        <span class="token builtin">id</span> <span class="token operator">=</span> elem<span class="token punctuation">[</span><span class="token string">'id'</span><span class="token punctuation">]</span>
+        <span class="token keyword">if</span> elem<span class="token punctuation">.</span>name <span class="token operator">==</span> <span class="token string">'h1'</span><span class="token punctuation">:</span>
+            result <span class="token operator">+=</span> <span class="token string-interpolation"><span class="token string">f'- &lt;a class="toc-chapter" href="</span><span class="token interpolation"><span class="token punctuation">{</span>targetpath<span class="token punctuation">}</span></span><span class="token string">#</span><span class="token interpolation"><span class="token punctuation">{</span><span class="token builtin">id</span><span class="token punctuation">}</span></span><span class="token string">"&gt;'</span></span>
+            result <span class="token operator">+=</span> elem<span class="token punctuation">.</span>get_text<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span>strip<span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">+</span> <span class="token string">'&lt;/a&gt;\n'</span>
+        <span class="token keyword">if</span> elem<span class="token punctuation">.</span>name <span class="token operator">==</span> <span class="token string">'h2'</span><span class="token punctuation">:</span>
+            result <span class="token operator">+=</span> <span class="token punctuation">(</span><span class="token string">' '</span> <span class="token operator">*</span> <span class="token number">2</span><span class="token punctuation">)</span>
+            result <span class="token operator">+=</span> <span class="token string-interpolation"><span class="token string">f'- &lt;a class="toc-section" href="</span><span class="token interpolation"><span class="token punctuation">{</span>targetpath<span class="token punctuation">}</span></span><span class="token string">#</span><span class="token interpolation"><span class="token punctuation">{</span><span class="token builtin">id</span><span class="token punctuation">}</span></span><span class="token string">"&gt;'</span></span>
+            result <span class="token operator">+=</span> <span class="token string">'&lt;span class="dashmask"&gt;'</span>
+            result <span class="token operator">+=</span> elem<span class="token punctuation">.</span>get_text<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span>strip<span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">+</span> <span class="token string">'&lt;/span&gt;&lt;/a&gt;\n'</span>
+        <span class="token keyword">if</span> elem<span class="token punctuation">.</span>name <span class="token operator">==</span> <span class="token string">'h3'</span><span class="token punctuation">:</span>
+            result <span class="token operator">+=</span> <span class="token punctuation">(</span><span class="token string">' '</span> <span class="token operator">*</span> <span class="token number">4</span><span class="token punctuation">)</span>
+            result <span class="token operator">+=</span> <span class="token string-interpolation"><span class="token string">f'- &lt;a class="toc-subsection" href="</span><span class="token interpolation"><span class="token punctuation">{</span>targetpath<span class="token punctuation">}</span></span><span class="token string">#</span><span class="token interpolation"><span class="token punctuation">{</span><span class="token builtin">id</span><span class="token punctuation">}</span></span><span class="token string">"&gt;'</span></span>
+            result <span class="token operator">+=</span> elem<span class="token punctuation">.</span>get_text<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span>strip<span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">+</span> <span class="token string">'&lt;/a&gt;\n'</span>
+
+<span class="token comment"># 書き出し</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span>result<span class="token punctuation">)</span>
+outpath <span class="token operator">=</span> Path<span class="token punctuation">(</span><span class="token string">'tocoutput.md'</span><span class="token punctuation">)</span>
+outpath<span class="token punctuation">.</span>write_text<span class="token punctuation">(</span>result<span class="token punctuation">,</span> encoding<span class="token operator">=</span><span class="token string">'utf-8'</span><span class="token punctuation">)</span></code></pre></div>
+
+    </section>
+  
+
+</body></html>
