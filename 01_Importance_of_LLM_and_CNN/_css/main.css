@@ -41,12 +41,12 @@ html {
   }
 }
 @page: left {
-  margin-block: 15mm 18mm;
-  margin-inline: 16mm 18mm;
+  margin-block: 15mm 9mm;
+  margin-inline: 16mm 19.5mm;
 }
 @page: right {
-  margin-block: 15mm 18mm;
-  margin-inline: 18mm 16mm;
+  margin-block: 15mm 9mm;
+  margin-inline: 19.5mm 16mm;
 }
 /* @page: nth(1) {
   margin: 0;
@@ -129,8 +129,8 @@ h2::before {
   /* height: 58mm;
   width: 114mm; */
   position: relative;
-  margin-top: 2mm;
-  margin-bottom: 2mm;
+  margin-top: 0mm;
+  margin-bottom: 0mm;
 }
 .secheader p {
   font-size: 11Q;
@@ -166,9 +166,9 @@ h3 {
 
 /* 小見出し */
 h4 {
-  font-size: 12Q;
+  /* font-size: 12Q; */
   font-weight: bold;
-  line-height: 20Q;
+  /* line-height: 20Q; */
   margin-top: 5mm;
   margin-bottom: 1mm;
   color: #3da8c9;
@@ -207,8 +207,8 @@ h6::before {
 /* 本文 */
 p {
   text-align: justify;
-  font-size: 12Q; /* 3ミリ */
-  line-height: 20Q;
+  font-size: 13Q; 
+  line-height: 24Q;
   text-indent: 1em;
   margin-block: 0;
 }
@@ -229,7 +229,7 @@ ul ul {
 }
 
 li {
-  font-size: 12Q;
+  /* font-size: 12Q; */
   line-height: 20Q;
 }
 /* 強調部分の設定 */
@@ -336,22 +336,21 @@ kbd {
   flex-direction: row;
   /*横並びにする*/
   align-items: center;
-  justify-content: center;
+  justify-content: space-around;
   /*縦に伸ばさない*/
   flex-wrap: wrap;
   position: center;
-  margin-top: 5mm;
-  margin-bottom: 5mm;
+  margin: 5mm;
 }
-.figure img{
-  border: solid 0.5mm #ccc;
+/* .figure img{
+  border: solid 0.25mm #6e6e6e;
 }
 .figure img[src$=".svg"] {
   border: none;
 }
 .figure img[src$=".pnsg"] {
   border: none;
-}
+} */
 /* キャプション */
 .figure p {
   text-indent: 0;
@@ -540,12 +539,8 @@ span.comment:not(.token) {
 .column {
   border: solid 0.2mm #87cefa;
   border-radius: 10px;
-  padding: 4mm;
-  padding-right: 6mm;
-  padding-left: 6mm;
-  margin-top: 6mm;
-  margin-right: auto;
-  margin-left: auto;
+  padding: 2mm;
+  margin-top: 5mm;
   width: 114mm;
   background: #e0ffff;
 }
@@ -559,16 +554,15 @@ span.comment:not(.token) {
   margin-bottom: 1mm;
 }
 .column p {
-  font-size: 11Q;
-  text-indent: 0;
+  font-size: 12Q;
+  /* text-indent: 1em; */
   line-height: 20Q;
 }
 .column td {
   background: #fff;
 }
-
 .column h4::before {
-  content: "column";
+  content: "MEMO";
   padding-right: 2mm;
   padding-left: 2mm;
   margin-right: 2mm;
@@ -580,12 +574,17 @@ span.comment:not(.token) {
 /* 脚注 */
 .notetext {
   float: footnote;    /* CSSでページ下部に脚注を置くための設定 */
-  font-size: 11Q;     /* フォントは小さくしたい */
+  font-size: 10Q;     /* フォントは小さくしたい */
   line-height: 12Q;
-  text-indent: 0;
+  text-indent: 0em;
 }
 ::footnote-marker {
-  content: "[" counter(footnote) "]";
+  content: "[" counter(footnote) "] ";
+  font-size: 0.7em;
+  position: relative;
+  display: inline;
+  /* vertical-align: super; */
+  inset-block-start: -0.5em;
 }
 ::footnote-call {
   content: "[" counter(footnote) "] ";
