@@ -156,19 +156,14 @@ Google Bardの入力画面
 </span>ため、英語圏の慣習に従うような回答が多めになると言われています。
 
 #### ② 古いデータで学習されており、最新情報にはついていけない
-@hashtag:#API@hashtagend 
-@hashtag:#Function call@hashtagend 
-大量の学習が必要になるため、リアルタイムでモデルを更新していくことは困難です。例えば、ChatGPTでは2021年9月までのデータが学習されています<span class="notetext">無償版ChatGPTには"gpt-3.5"系の言語モデルが使用されており、2021年09時点のデータで学習されています。2023年11月に発表された"gpt-4-turbo"系の言語モデルは2023年4月までのデータで学習されています。（https://platform.openai.com/docs/models/）
-</span>。一方で、有償版のChatGPT、MicrosoftのBeing、GoogleのBardでは、インターネット検索も可能なため、学習時には知りえなかった知識についても、言語モデルを更新することなく回答する事が可能になっています。例えると、全く土地勘がない地方新聞を読むイメージです。日本語自体は読解できるので理解はできますが、このように、別のアプリケーションと連携する事で解決可能になります。
-
-#### ③ 社内データを分析したいけど、一度に読み込ませることができず使えない
 @hashtag:#RAG（Retrieval Augmented Generation）@hashtagend 
 @hashtag:#Embedding@hashtagend 
-@hashtag:#ベクトルDB@hashtagend 
-モデルに拡張知識を授ける方法（RAG）がある
-著者について聞いてみる。Google Search APIと連携したChatGPTと著者の情報をEmbeddしたChatGPTに著者を紹介させる。
+@hashtag:#ベクトルDB@hashtagend
 
-#### ④ 生成物にバラつきがあり（毎回、回答が異なる）信用できない
+モデルの作成には大量の学習が必要になるため、リアルタイムでモデルを更新していくことは困難です。例えば、ChatGPTでは2021年9月までのデータが学習されています<span class="notetext">無償版ChatGPTには"gpt-3.5"系の言語モデルが使用されており、2021年09時点のデータで学習されています。2023年11月に発表された"gpt-4-turbo"系の言語モデルは2023年4月までのデータで学習されています。（https://platform.openai.com/docs/models/）
+</span>。一方で、有償版のChatGPT、MicrosoftのBeing、GoogleのBardでは、インターネット検索も可能なため、学習時には知りえなかった知識についても、言語モデルを更新することなく回答する事が可能になっています。モデルの更新をせずに最新情報を扱うという事は、例えると、全く土地勘がない地方新聞を読むイメージに近いかもしれません。その土地固有のお祭り情報や慣習については解像度が下がるかもしれませんが、日本語自体は読解できるので、記事の内容は理解することができます。このように、外部情報を与えてあげる事によって、より。
+
+#### ③ 生成物にバラつきがあり（毎回、回答が異なる）信用できない
 @hashtag:#ハルシネーション@hashtagend 
 @hashtag:#プロンプトエンジニアリング@hashtagend 
 @hashtag:#chain-of thought learning@hashtagend 
