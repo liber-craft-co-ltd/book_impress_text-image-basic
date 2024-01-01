@@ -1,0 +1,608 @@
+@charset "UTF-8";
+
+/* フォントはcss/fontsフォルダのファイルを直接参照 */
+@font-face {
+  font-family: keyfont;
+  src: url("fonts/keyboard-JP-Regular.otf");
+}
+@font-face {
+  font-family: notosans-vf;
+  src: url("fonts/NotoSansJP-VF.otf");
+}
+@font-face {
+  font-family: udevgothic;
+  src: url("fonts/UDEVGothic-Regular.ttf");
+}
+
+/*リセット*/
+html {
+  orphans: 1;
+  widows: 1;
+  /* font-size: 0.25mm; */
+  /*qで級数指定できる*/
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/*ページサイズ
+今回はcss paged mediaで指定
+*/
+@page {
+  size: 148mm 210mm;
+  font-size: 10Q;
+  @bottom-center {
+    content: counter(page);
+    block-size: 10Q;
+    margin-block-start: 4mm;
+  }
+}
+@page: left {
+  margin-block: 15mm 9mm;
+  margin-inline: 16mm 19.5mm;
+}
+@page: right {
+  margin-block: 15mm 9mm;
+  margin-inline: 19.5mm 16mm;
+}
+/* @page: nth(1) {
+  margin: 0;
+  background-color: #dddddd;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='192' height='192' viewBox='0 0 192 192'%3E%3Cpath fill='%23999999' fill-opacity='0.4' d='M192 15v2a11 11 0 0 0-11 11c0 1.94 1.16 4.75 2.53 6.11l2.36 2.36a6.93 6.93 0 0 1 1.22 7.56l-.43.84a8.08 8.08 0 0 1-6.66 4.13H145v35.02a6.1 6.1 0 0 0 3.03 4.87l.84.43c1.58.79 4 .4 5.24-.85l2.36-2.36a12.04 12.04 0 0 1 7.51-3.11 13 13 0 1 1 .02 26 12 12 0 0 1-7.53-3.11l-2.36-2.36a4.93 4.93 0 0 0-5.24-.85l-.84.43a6.1 6.1 0 0 0-3.03 4.87V143h35.02a8.08 8.08 0 0 1 6.66 4.13l.43.84a6.91 6.91 0 0 1-1.22 7.56l-2.36 2.36A10.06 10.06 0 0 0 181 164a11 11 0 0 0 11 11v2a13 13 0 0 1-13-13 12 12 0 0 1 3.11-7.53l2.36-2.36a4.93 4.93 0 0 0 .85-5.24l-.43-.84a6.1 6.1 0 0 0-4.87-3.03H145v35.02a8.08 8.08 0 0 1-4.13 6.66l-.84.43a6.91 6.91 0 0 1-7.56-1.22l-2.36-2.36A10.06 10.06 0 0 0 124 181a11 11 0 0 0-11 11h-2a13 13 0 0 1 13-13c2.47 0 5.79 1.37 7.53 3.11l2.36 2.36a4.94 4.94 0 0 0 5.24.85l.84-.43a6.1 6.1 0 0 0 3.03-4.87V145h-35.02a8.08 8.08 0 0 1-6.66-4.13l-.43-.84a6.91 6.91 0 0 1 1.22-7.56l2.36-2.36A10.06 10.06 0 0 0 107 124a11 11 0 0 0-22 0c0 1.94 1.16 4.75 2.53 6.11l2.36 2.36a6.93 6.93 0 0 1 1.22 7.56l-.43.84a8.08 8.08 0 0 1-6.66 4.13H49v35.02a6.1 6.1 0 0 0 3.03 4.87l.84.43c1.58.79 4 .4 5.24-.85l2.36-2.36a12.04 12.04 0 0 1 7.51-3.11A13 13 0 0 1 81 192h-2a11 11 0 0 0-11-11c-1.94 0-4.75 1.16-6.11 2.53l-2.36 2.36a6.93 6.93 0 0 1-7.56 1.22l-.84-.43a8.08 8.08 0 0 1-4.13-6.66V145H11.98a6.1 6.1 0 0 0-4.87 3.03l-.43.84c-.79 1.58-.4 4 .85 5.24l2.36 2.36a12.04 12.04 0 0 1 3.11 7.51A13 13 0 0 1 0 177v-2a11 11 0 0 0 11-11c0-1.94-1.16-4.75-2.53-6.11l-2.36-2.36a6.93 6.93 0 0 1-1.22-7.56l.43-.84a8.08 8.08 0 0 1 6.66-4.13H47v-35.02a6.1 6.1 0 0 0-3.03-4.87l-.84-.43c-1.59-.8-4-.4-5.24.85l-2.36 2.36A12 12 0 0 1 28 109a13 13 0 1 1 0-26c2.47 0 5.79 1.37 7.53 3.11l2.36 2.36a4.94 4.94 0 0 0 5.24.85l.84-.43A6.1 6.1 0 0 0 47 84.02V49H11.98a8.08 8.08 0 0 1-6.66-4.13l-.43-.84a6.91 6.91 0 0 1 1.22-7.56l2.36-2.36A10.06 10.06 0 0 0 11 28 11 11 0 0 0 0 17v-2a13 13 0 0 1 13 13c0 2.47-1.37 5.79-3.11 7.53l-2.36 2.36a4.94 4.94 0 0 0-.85 5.24l.43.84A6.1 6.1 0 0 0 11.98 47H47V11.98a8.08 8.08 0 0 1 4.13-6.66l.84-.43a6.91 6.91 0 0 1 7.56 1.22l2.36 2.36A10.06 10.06 0 0 0 68 11 11 11 0 0 0 79 0h2a13 13 0 0 1-13 13 12 12 0 0 1-7.53-3.11l-2.36-2.36a4.93 4.93 0 0 0-5.24-.85l-.84.43A6.1 6.1 0 0 0 49 11.98V47h35.02a8.08 8.08 0 0 1 6.66 4.13l.43.84a6.91 6.91 0 0 1-1.22 7.56l-2.36 2.36A10.06 10.06 0 0 0 85 68a11 11 0 0 0 22 0c0-1.94-1.16-4.75-2.53-6.11l-2.36-2.36a6.93 6.93 0 0 1-1.22-7.56l.43-.84a8.08 8.08 0 0 1 6.66-4.13H143V11.98a6.1 6.1 0 0 0-3.03-4.87l-.84-.43c-1.59-.8-4-.4-5.24.85l-2.36 2.36A12 12 0 0 1 124 13a13 13 0 0 1-13-13h2a11 11 0 0 0 11 11c1.94 0 4.75-1.16 6.11-2.53l2.36-2.36a6.93 6.93 0 0 1 7.56-1.22l.84.43a8.08 8.08 0 0 1 4.13 6.66V47h35.02a6.1 6.1 0 0 0 4.87-3.03l.43-.84c.8-1.59.4-4-.85-5.24l-2.36-2.36A12 12 0 0 1 179 28a13 13 0 0 1 13-13zM84.02 143a6.1 6.1 0 0 0 4.87-3.03l.43-.84c.8-1.59.4-4-.85-5.24l-2.36-2.36A12 12 0 0 1 83 124a13 13 0 1 1 26 0c0 2.47-1.37 5.79-3.11 7.53l-2.36 2.36a4.94 4.94 0 0 0-.85 5.24l.43.84a6.1 6.1 0 0 0 4.87 3.03H143v-35.02a8.08 8.08 0 0 1 4.13-6.66l.84-.43a6.91 6.91 0 0 1 7.56 1.22l2.36 2.36A10.06 10.06 0 0 0 164 107a11 11 0 0 0 0-22c-1.94 0-4.75 1.16-6.11 2.53l-2.36 2.36a6.93 6.93 0 0 1-7.56 1.22l-.84-.43a8.08 8.08 0 0 1-4.13-6.66V49h-35.02a6.1 6.1 0 0 0-4.87 3.03l-.43.84c-.79 1.58-.4 4 .85 5.24l2.36 2.36a12.04 12.04 0 0 1 3.11 7.51A13 13 0 1 1 83 68a12 12 0 0 1 3.11-7.53l2.36-2.36a4.93 4.93 0 0 0 .85-5.24l-.43-.84A6.1 6.1 0 0 0 84.02 49H49v35.02a8.08 8.08 0 0 1-4.13 6.66l-.84.43a6.91 6.91 0 0 1-7.56-1.22l-2.36-2.36A10.06 10.06 0 0 0 28 85a11 11 0 0 0 0 22c1.94 0 4.75-1.16 6.11-2.53l2.36-2.36a6.93 6.93 0 0 1 7.56-1.22l.84.43a8.08 8.08 0 0 1 4.13 6.66V143h35.02z'%3E%3C/path%3E%3C/svg%3E");
+  @bottom-center {
+    content: none;
+  }
+} */
+
+:root {
+  font-family: notosans-vf;
+  font-size: 12Q;
+  line-height: 20Q;
+  counter-reset: header2;
+}
+
+/* 強制改ページ指定*/
+.pagebreak {
+  visibility: hidden;
+  page-break-after: always;
+}
+
+/* 見出し類 */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-feature-settings: "palt";
+  text-spacing: none;
+}
+
+h1 {
+  font-size: 48Q;
+  line-height: 52Q;
+  string-set: chapter-title content();
+  /* margin-inline-start: 15mm; */
+  margin-block-start: 40mm; */
+  text-align: left;
+  counter-reset: section-counter 0;
+}
+.subtitle {
+  font-size: 24Q;
+  text-align: center;
+  font-weight: 700;
+  margin-block-start: 40mm;
+}
+
+h2 {
+  /* break-before: verso; */
+  break-before: page;
+  font-size: 24Q;
+  line-height: 28Q;
+  text-align: left;
+  margin-right: 0mm;
+  margin-left: 15mm;
+}
+h2::before {
+  content: counter(header2, decimal-leading-zero);
+  counter-increment: header2;
+  position: absolute;
+  font-size: 50Q;
+  /* line-height: 1em; */
+  inline-size: 25mm;
+  block-size: 20mm;
+  border-end-end-radius: 20%;
+  padding-inline-start: 5mm;
+  padding-block-start: 10mm;
+  inset-inline-start: -16mm;
+  inset-block-start: -15mm;
+  /* background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='192' height='192' viewBox='0 0 192 192'%3E%3Cpath fill='%23999999' fill-opacity='0.4' d='M192 15v2a11 11 0 0 0-11 11c0 1.94 1.16 4.75 2.53 6.11l2.36 2.36a6.93 6.93 0 0 1 1.22 7.56l-.43.84a8.08 8.08 0 0 1-6.66 4.13H145v35.02a6.1 6.1 0 0 0 3.03 4.87l.84.43c1.58.79 4 .4 5.24-.85l2.36-2.36a12.04 12.04 0 0 1 7.51-3.11 13 13 0 1 1 .02 26 12 12 0 0 1-7.53-3.11l-2.36-2.36a4.93 4.93 0 0 0-5.24-.85l-.84.43a6.1 6.1 0 0 0-3.03 4.87V143h35.02a8.08 8.08 0 0 1 6.66 4.13l.43.84a6.91 6.91 0 0 1-1.22 7.56l-2.36 2.36A10.06 10.06 0 0 0 181 164a11 11 0 0 0 11 11v2a13 13 0 0 1-13-13 12 12 0 0 1 3.11-7.53l2.36-2.36a4.93 4.93 0 0 0 .85-5.24l-.43-.84a6.1 6.1 0 0 0-4.87-3.03H145v35.02a8.08 8.08 0 0 1-4.13 6.66l-.84.43a6.91 6.91 0 0 1-7.56-1.22l-2.36-2.36A10.06 10.06 0 0 0 124 181a11 11 0 0 0-11 11h-2a13 13 0 0 1 13-13c2.47 0 5.79 1.37 7.53 3.11l2.36 2.36a4.94 4.94 0 0 0 5.24.85l.84-.43a6.1 6.1 0 0 0 3.03-4.87V145h-35.02a8.08 8.08 0 0 1-6.66-4.13l-.43-.84a6.91 6.91 0 0 1 1.22-7.56l2.36-2.36A10.06 10.06 0 0 0 107 124a11 11 0 0 0-22 0c0 1.94 1.16 4.75 2.53 6.11l2.36 2.36a6.93 6.93 0 0 1 1.22 7.56l-.43.84a8.08 8.08 0 0 1-6.66 4.13H49v35.02a6.1 6.1 0 0 0 3.03 4.87l.84.43c1.58.79 4 .4 5.24-.85l2.36-2.36a12.04 12.04 0 0 1 7.51-3.11A13 13 0 0 1 81 192h-2a11 11 0 0 0-11-11c-1.94 0-4.75 1.16-6.11 2.53l-2.36 2.36a6.93 6.93 0 0 1-7.56 1.22l-.84-.43a8.08 8.08 0 0 1-4.13-6.66V145H11.98a6.1 6.1 0 0 0-4.87 3.03l-.43.84c-.79 1.58-.4 4 .85 5.24l2.36 2.36a12.04 12.04 0 0 1 3.11 7.51A13 13 0 0 1 0 177v-2a11 11 0 0 0 11-11c0-1.94-1.16-4.75-2.53-6.11l-2.36-2.36a6.93 6.93 0 0 1-1.22-7.56l.43-.84a8.08 8.08 0 0 1 6.66-4.13H47v-35.02a6.1 6.1 0 0 0-3.03-4.87l-.84-.43c-1.59-.8-4-.4-5.24.85l-2.36 2.36A12 12 0 0 1 28 109a13 13 0 1 1 0-26c2.47 0 5.79 1.37 7.53 3.11l2.36 2.36a4.94 4.94 0 0 0 5.24.85l.84-.43A6.1 6.1 0 0 0 47 84.02V49H11.98a8.08 8.08 0 0 1-6.66-4.13l-.43-.84a6.91 6.91 0 0 1 1.22-7.56l2.36-2.36A10.06 10.06 0 0 0 11 28 11 11 0 0 0 0 17v-2a13 13 0 0 1 13 13c0 2.47-1.37 5.79-3.11 7.53l-2.36 2.36a4.94 4.94 0 0 0-.85 5.24l.43.84A6.1 6.1 0 0 0 11.98 47H47V11.98a8.08 8.08 0 0 1 4.13-6.66l.84-.43a6.91 6.91 0 0 1 7.56 1.22l2.36 2.36A10.06 10.06 0 0 0 68 11 11 11 0 0 0 79 0h2a13 13 0 0 1-13 13 12 12 0 0 1-7.53-3.11l-2.36-2.36a4.93 4.93 0 0 0-5.24-.85l-.84.43A6.1 6.1 0 0 0 49 11.98V47h35.02a8.08 8.08 0 0 1 6.66 4.13l.43.84a6.91 6.91 0 0 1-1.22 7.56l-2.36 2.36A10.06 10.06 0 0 0 85 68a11 11 0 0 0 22 0c0-1.94-1.16-4.75-2.53-6.11l-2.36-2.36a6.93 6.93 0 0 1-1.22-7.56l.43-.84a8.08 8.08 0 0 1 6.66-4.13H143V11.98a6.1 6.1 0 0 0-3.03-4.87l-.84-.43c-1.59-.8-4-.4-5.24.85l-2.36 2.36A12 12 0 0 1 124 13a13 13 0 0 1-13-13h2a11 11 0 0 0 11 11c1.94 0 4.75-1.16 6.11-2.53l2.36-2.36a6.93 6.93 0 0 1 7.56-1.22l.84.43a8.08 8.08 0 0 1 4.13 6.66V47h35.02a6.1 6.1 0 0 0 4.87-3.03l.43-.84c.8-1.59.4-4-.85-5.24l-2.36-2.36A12 12 0 0 1 179 28a13 13 0 0 1 13-13zM84.02 143a6.1 6.1 0 0 0 4.87-3.03l.43-.84c.8-1.59.4-4-.85-5.24l-2.36-2.36A12 12 0 0 1 83 124a13 13 0 1 1 26 0c0 2.47-1.37 5.79-3.11 7.53l-2.36 2.36a4.94 4.94 0 0 0-.85 5.24l.43.84a6.1 6.1 0 0 0 4.87 3.03H143v-35.02a8.08 8.08 0 0 1 4.13-6.66l.84-.43a6.91 6.91 0 0 1 7.56 1.22l2.36 2.36A10.06 10.06 0 0 0 164 107a11 11 0 0 0 0-22c-1.94 0-4.75 1.16-6.11 2.53l-2.36 2.36a6.93 6.93 0 0 1-7.56 1.22l-.84-.43a8.08 8.08 0 0 1-4.13-6.66V49h-35.02a6.1 6.1 0 0 0-4.87 3.03l-.43.84c-.79 1.58-.4 4 .85 5.24l2.36 2.36a12.04 12.04 0 0 1 3.11 7.51A13 13 0 1 1 83 68a12 12 0 0 1 3.11-7.53l2.36-2.36a4.93 4.93 0 0 0 .85-5.24l-.43-.84A6.1 6.1 0 0 0 84.02 49H49v35.02a8.08 8.08 0 0 1-4.13 6.66l-.84.43a6.91 6.91 0 0 1-7.56-1.22l-2.36-2.36A10.06 10.06 0 0 0 28 85a11 11 0 0 0 0 22c1.94 0 4.75-1.16 6.11-2.53l2.36-2.36a6.93 6.93 0 0 1 7.56-1.22l.84.43a8.08 8.08 0 0 1 4.13 6.66V143h35.02z'%3E%3C/path%3E%3C/svg%3E"); */
+  background: #cdf2fd;
+  color: #3da8c9;
+  z-index: -1;
+}
+.secheader {
+  break-before: page;
+  /* height: 58mm;
+  width: 114mm; */
+  position: relative;
+  margin-top: 0mm;
+  margin-bottom: 0mm;
+}
+.secheader p {
+  font-size: 11Q;
+  line-height: 16Q;
+  text-indent: 0em;
+  padding: 2mm 2mm 2mm 2mm;
+  margin-top: 2mm;
+  margin-bottom: 2mm;
+  background: #cdf2fd;
+}
+
+h3 {
+  font-size: 15Q;
+  line-height: 10mm;
+  width: 114mm;
+  height: 10mm;
+   /* margin */
+  margin-top: 5mm;
+  margin-bottom: 3mm;
+  margin-right: 0mm;
+  margin-left: 0mm;
+  /* padding */
+  padding-top: 0mm;
+  padding-bottom: 0mm;
+  padding-right: 1mm;
+  padding-left: 1mm;
+  border: solid 0.5mm #3da8c9;
+  color: #3da8c9;
+}
+.pagebreak + h3 {
+  margin-top: 4mm;
+}
+
+/* 小見出し */
+h4 {
+  /* font-size: 12Q; */
+  font-weight: bold;
+  /* line-height: 20Q; */
+  margin-top: 5mm;
+  margin-bottom: 1mm;
+  color: #3da8c9;
+}
+pre + h4 {
+  margin-top: 8mm;
+}
+
+.pagebreak + h4 {
+  margin-top: 2mm;
+}
+
+/* 表見出し */
+h5 {
+  font-size: 12Q;
+  font-weight: bold;
+  line-height: 22Q;
+  margin-top: 5mm;
+  color: #777;
+}
+
+/* コード見出し */
+h6 {
+  font-size: 12Q;
+  font-weight: bold;
+  line-height: 20Q;
+  margin-top: 5mm;
+  color: #777;
+}
+h6::before {
+  content: "・";
+}
+.pagebreak + h6 {
+  margin-top: 0;
+}
+/* 本文 */
+p {
+  text-align: justify;
+  font-size: 13Q; 
+  line-height: 24Q;
+  text-indent: 1em;
+  margin-block: 0;
+}
+.pagebreak + p {
+  margin-top: 4mm;
+}
+/* 箇条書き部分の設定 */
+ol,
+ul {
+  margin-inline: 1.0em;
+  margin-block: 0.5lh;
+  font-weight: 500;
+}
+ol ol,
+ul ul {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+li {
+  /* font-size: 12Q; */
+  line-height: 20Q;
+}
+/* 強調部分の設定 */
+em {
+  font-style: normal;
+  text-decoration: underline;
+  text-decoration-thickness: 0.4em;
+  text-decoration-color: #82def5;
+  text-underline-offset: -0.1em;
+  text-decoration-skip-ink: none;
+}
+
+
+/* strong {
+  background: #baefff;
+} */
+
+/* 表 */
+table {
+  border-collapse: collapse;
+  font-size: 10Q;
+  line-height: 14Q;
+}
+td,
+th {
+  border: solid 0.5mm #888;
+  padding: 1mm 1.5mm;
+  min-width: 6em;
+}
+
+th {
+  font-family: notosans-m;
+  color: #ffffff;
+  background-color: #3da8c9;
+}
+table + p {
+  margin-top: 5mm;
+}
+
+/* ソースコード */
+pre {
+  font-size: 12Q;
+  line-height: 4mm;
+  background: #cdf2fd;
+  /* background-size: 19mm 19mm; */
+  /* background-position: 0 1.5mm; */
+  margin-top: 1mm;
+  margin-bottom: 5mm;
+  padding: 6Q;
+  overflow: visible;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  font-family: udevgothic, notosans-r, monospace;
+  border-top: solid 0.3mm #666;
+  border-bottom: solid 0.3mm #666;
+}
+.codenum-elem {
+  display: inline-block;
+  width: 2em;
+  color: #888;
+}
+
+p + pre {
+  margin-top: 4mm;
+}
+
+pre code {
+  font-family: udevgothic, notosans-r, monospace;
+}
+
+p code {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+/* コード内引き出し線 */
+.codered {
+  /* background: #fff; */
+  font-size: 10Q;
+  line-height: 12Q;
+  position: relative;
+  /* border: solid 0.15mm #f88; */
+  color: #f00;
+  font-weight: bold;
+  padding: 0 1mm 0.5mm 1mm;
+}
+.codered::before {
+  content: "";
+  display: block;
+  position: absolute;
+  width: 5mm;
+  top: 1mm;
+  left: -5mm;
+  border-bottom: dashed 0.25mm #f88;
+}
+
+kbd {
+  font-family: keyfont;
+}
+
+/* 図版領域 */
+.figure {
+  display: flex;
+  flex-direction: row;
+  /*横並びにする*/
+  align-items: center;
+  justify-content: space-around;
+  /*縦に伸ばさない*/
+  flex-wrap: wrap;
+  position: center;
+  margin: 5mm;
+}
+/* .figure img{
+  border: solid 0.25mm #6e6e6e;
+}
+.figure img[src$=".svg"] {
+  border: none;
+}
+.figure img[src$=".pnsg"] {
+  border: none;
+} */
+/* キャプション */
+.figure p {
+  text-indent: 0;
+  font-weight: bold;
+  font-size: 12Q;
+  line-height: 14q;
+  margin-top: 0.75mm;
+  font-size: 10q;
+  width: 100%;
+  text-align: center;
+}
+.figure ul {
+  position: absolute;
+  font-size: 11Q;
+  width: 12em;
+  right: 0;
+  list-style: none;
+  margin: 0;
+}
+.figure li {
+  font-size: 11Q;
+  line-height: 16Q;
+  border: solid 0.25mm #f00;
+  background: rgba(255, 255, 255, 0.7);
+  margin-bottom: 2mm;
+  padding: 0.25mm;
+}
+
+/* ポイント */
+.point {
+  border: solid 0.2mm #333;
+  border-right: none;
+  border-left: none;
+  padding: 4mm;
+  padding-right: 6mm;
+  padding-left: 6mm;
+  margin-top: 6mm;
+  margin-right: auto;
+  margin-left: auto;
+  width: 114mm;
+  background: #cdf2fd;
+}
+.point h4 {
+  text-align: center;
+  margin-top: 0;
+  font-size: 13Q;
+  color: #3da8c9;
+}
+.point ul {
+  margin-top: 1mm;
+  margin-bottom: 1mm;
+}
+.point p {
+  font-size: 11Q;
+  text-indent: 0;
+  line-height: 20Q;
+}
+.point td {
+  background: #fff;
+}
+
+.point h4::before {
+  content: "point";
+  padding-right: 2mm;
+  padding-left: 2mm;
+  margin-right: 2mm;
+  border: solid 0.2mm #87cefa;
+  background: #87cefa;
+  color: #ffffff;
+}
+
+/* ショートカットキー */
+.shortcut {
+  border-top: solid 0.5mm #000;
+  border-bottom: solid 0.5mm #000;
+  font-size: 11Q;
+  font-weight: bold;
+  margin: 4mm 0;
+  padding: 1mm 0;
+  background: #fff;
+}
+.shortcut h4 {
+  display: inline-block;
+  margin-top: 0;
+  font-size: 11Q;
+  background: #eee;
+  color: #333;
+}
+.shortcut p {
+  font-size: 11Q;
+  display: inline-block;
+  color: #333;
+}
+.point .shortcut {
+  margin-bottom: 0mm;
+}
+
+/* URL */
+.url {
+  text-indent: 0;
+  font-size: 10Q;
+}
+.figure + .url {
+  margin-top: -5mm;
+}
+
+/* ハッシュタグ */
+.hashtag {
+  text-indent: 0;
+  right: -8em;
+  font-size: 11Q;
+  line-height: 13Q;
+  color: #3da8c9;
+  font-weight: bold;
+}
+
+/*コラム*/
+.two_column {
+  column-count: 2;
+}
+.two_column p {
+  text-indent: 0;
+}
+
+/*編集コメント（サイドバー表示）*/
+span.comment:not(.token) {
+  position: absolute;
+  display: block;
+  text-indent: 0;
+  right: -8em;
+  font-size: 8Q;
+  line-height: 13Q;
+  background: #ff0;
+  color: #f00;
+  width: 8em;
+  border: solid 0.25mm #f80;
+  font-family: notosans-r;
+}
+/*編集コメント（長文用）*/
+.hen,
+.hen p {
+  font-size: 10Q;
+  line-height: 3mm;
+  background: #ff0;
+  color: #f00;
+  text-indent: 0;
+}
+
+/* ページタイトル */
+#pagetitle {
+  display: none;
+}
+
+/*ファイル名*/
+.file {
+  font-size: 11Q;
+  margin-top: 4mm;
+  margin-bottom: 4mm;
+  border: solid 0.5mm;
+}
+
+/* dockerコマンドパーツ */
+.command {
+  border-top: solid 0.5mm #000;
+  border-bottom: solid 0.5mm #000;
+  font-size: 12Q;
+  font-weight: bold;
+  /* 上 | 右 | 下 | 左 */
+  margin: 1mm 0 3mm 0;
+  padding: 1mm 1mm;
+  background: #fff;
+  font-family: udevgothic, notosans-r, monospace;
+}
+
+/*
+{
+ "f": "《folder》",
+ "r": "<image src=\"./_css/img/foldericon.png\" />"
+},
+{
+"f": "《icon》",
+"r": "--------------"
+}*/
+
+/* コラム */
+.column {
+  border: solid 0.2mm #87cefa;
+  border-radius: 10px;
+  padding: 2mm;
+  margin-top: 5mm;
+  width: 114mm;
+  background: #e0ffff;
+}
+.column h4 {
+  margin-top: 0;
+  font-size: 13Q;
+  color: #3da8c9;
+}
+.column ul {
+  margin-top: 1mm;
+  margin-bottom: 1mm;
+}
+.column p {
+  font-size: 12Q;
+  /* text-indent: 1em; */
+  line-height: 20Q;
+}
+.column td {
+  background: #fff;
+}
+.column h4::before {
+  content: "MEMO";
+  padding-right: 2mm;
+  padding-left: 2mm;
+  margin-right: 2mm;
+  border: solid 0.2mm #87cefa;
+  background: #87cefa;
+  color: #ffffff;
+}
+
+/* 脚注 */
+.notetext {
+  float: footnote;    /* CSSでページ下部に脚注を置くための設定 */
+  font-size: 10Q;     /* フォントは小さくしたい */
+  line-height: 12Q;
+  text-indent: 0em;
+}
+::footnote-marker {
+  content: "[" counter(footnote) "] ";
+  font-size: 0.7em;
+  position: relative;
+  display: inline;
+  /* vertical-align: super; */
+  inset-block-start: -0.5em;
+}
+::footnote-call {
+  content: "[" counter(footnote) "] ";
+  font-size: 0.7em;
+  position: relative;
+  display: inline;
+  /* vertical-align: super; */
+  inset-block-start: -0.5em;
+}
+/* VFM方式の注（[^1]:形式） */
+.footnotes {
+  font-size: 11Q;
+  line-height: 15Q;
+  margin-block-start: 4mm;
+  padding-block-start: 4mm;
+}
+.footnotes hr {
+  border: none;
+  border-block-start: solid 0.5mm #000;
+  height: 2mm;
+}
