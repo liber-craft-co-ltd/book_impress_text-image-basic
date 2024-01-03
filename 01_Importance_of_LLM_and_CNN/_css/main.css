@@ -93,7 +93,7 @@ h1 {
 .subtitle {
   font-size: 24Q;
   text-align: center;
-  font-weight: 700;
+  font-weight: bold;
   margin-block-start: 40mm;
 }
 
@@ -220,7 +220,7 @@ ol,
 ul {
   margin-inline: 1.0em;
   margin-block: 0.5lh;
-  font-weight: 500;
+  font-weight: bold;
 }
 ol ol,
 ul ul {
@@ -241,7 +241,6 @@ em {
   text-underline-offset: -0.1em;
   text-decoration-skip-ink: none;
 }
-
 
 /* strong {
   background: #baefff;
