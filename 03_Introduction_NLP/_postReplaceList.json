@@ -1,0 +1,206 @@
+[
+  {
+    "f": "@div:([a-z|0-9|_ ]+)",
+    "r": "<div class=\"$1\">"
+  },
+  {
+    "f": "@divend",
+    "r": "</div>"
+  },
+  {
+    "f": "={4,}ce",
+    "r": "<div class=\"mission code_and_error\">"
+  },
+  {
+    "f": "={4,}d",
+    "r": "<div class=\"mission col2\">"
+  },
+  {
+    "f": "={4,}",
+    "r": "<div class=\"mission\">"
+  },
+  {
+    "f": "<h6 ([^>]*)>(c\\d+_\\d+_\\d+.js)",
+    "r": "<h6 $1 class=\"codelist\">$2"
+  },
+  {
+    "f": "<h6 ([^>]*)>(.*\\.html)",
+    "r": "<h6 $1 class=\"codelist\">$2"
+  },
+  {
+    "f": "<h6 ([^>]*)>(.*\\.css)",
+    "r": "<h6 $1 class=\"codelist\">$2"
+  },
+  {
+    "f": "<h6 ([^>]*)>(.*\\.json)",
+    "r": "<h6 $1 class=\"codelist\">$2"
+  },
+  {
+    "f": "<h6 ([^>]*)>(.*\\.yaml)",
+    "r": "<h6 $1 class=\"codelist\">$2"
+  },
+  {
+    "f": "<h6 ([^>]*)>(.*\\.py)",
+    "r": "<h6 $1 class=\"codelist\">$2"
+  },
+  {
+    "f": "<h6 ([^>]*)>(Dockerfile)",
+    "r": "<h6 $1 class=\"codelist\">$2"
+  },
+  {
+    "f": "<h6 ([^>]*)>(.*\\.txt)",
+    "r": "<h6 $1 class=\"codelist\">$2"
+  },
+  {
+    "f": "<h6 ([^>]*)>(.*\\.rb)",
+    "r": "<h6 $1 class=\"codelist\">$2"
+  },
+  {
+    "f": "<h6 ([^>]*)>(Gemfile)",
+    "r": "<h6 $1 class=\"codelist\">$2"
+  },
+  {
+    "f": "<h6 ([^>]*)>(.*\\.php)",
+    "r": "<h6 $1 class=\"codelist\">$2"
+  },
+  {
+    "f": "<h6 ([^>]*)>(.*\\.java)",
+    "r": "<h6 $1 class=\"codelist\">$2"
+  },
+  {
+    "f": "<hr>",
+    "r": "<hr class=\"pagebreak\">"
+  },
+  {
+    "f": "@negative:(\\d+)",
+    "r": "<div style=\"margin-top:-$1mm\"></div>"
+  },
+  {
+    "f": "@positive:(\\d+)",
+    "r": "<div style=\"height:$1mm\"></div>"
+  },
+  {
+    "f": "@clear",
+    "r": "<div class=\"floatclear\"></div>"
+  },
+  {
+    "f": "<sp>",
+    "r": "<span class=\"spacer\"></span>"
+  },
+  {
+    "f": "@comment:([^@]*)@commend",
+    "r": "<span class=\"comment\">$1</span>"
+  },
+  {
+    "f": "@hashtag:([^@]*)@hashtagend",
+    "r": "<span class=\"hashtag\">$1</span>"
+  },
+  {
+    "f": "@entermark",
+    "r": "<span class=\"entermark\">改行</span>"
+  },
+  {
+    "f": "〘",
+    "r": "<kbd>"
+  },
+  {
+    "f": "〙",
+    "r": "</kbd>"
+  },
+  {
+    "f": "<li[^>]*>▶",
+    "r": "<li class=\"aokome\">"
+  },
+  {
+    "f": "<li[^>]*>([\u2776-\u277F\u24EB-\u24F4]+)",
+    "r": "<li class=\"akakome\"><span>$1</span>"
+  },
+  {
+    "f": "<span class=\"token comment\"([^>]*)>#←",
+    "r": "<span class=\"token comment codered\"$1>"
+  },
+  {
+    "f": "<span class=\"token comment\"([^>]*)>//←",
+    "r": "<span class=\"token comment codered\"$1>"
+  },
+  {
+    "f": "<span class=\"token comment\"([^>]*)>&lt;!--←(.*)--&gt;",
+    "r": "<span class=\"token comment codered\"$1>$2"
+  },
+  {
+    "f": "<span class=\"token comment\"([^>]*)>/\\*←(.*)\\*/",
+    "r": "<span class=\"token comment codered\"$1>$2"
+  },
+  {
+    "f": "<p[^>]*>＃",
+    "r": "<p class=\"serif2\">"
+  },
+  {
+    "f": "<p[^>]*><small>",
+    "r": "<p class=\"small\"><small>"
+  },
+  {
+    "f": "<p[^>]*>【先生([^】]+)】",
+    "r": "<p class=\"kaiwa teacher $1\"><span class=\"kaiwaborder\">"
+  },
+  {
+    "f": "<p[^>]*>【生徒([^】]+)】",
+    "r": "<p class=\"kaiwa student $1\"><span class=\"kaiwaborder\">"
+  },
+  {
+    "f": "<p>(<div class=\"[^\"]+\">)</p>",
+    "r": "$1"
+  },
+  {
+    "f": "<p></div></p>",
+    "r": "</div>"
+  },
+  {
+    "f": "<p></div>",
+    "r": "</div>"
+  },
+  {
+    "f": "</div></p>",
+    "r": "</div>"
+  },
+  {
+    "f": "(<div class=\"[^\"]+\">)</p>",
+    "r": "$1"
+  },
+  {
+    "f": "<p>(<div class=\"[^\"]+\">)",
+    "r": "$1"
+  },
+  {
+    "f": "(<hr class=\"[^\"]+\">)</p>",
+    "r": "$1"
+  },
+  {
+    "f": "<p>(<hr class=\"[^\"]+\">)",
+    "r": "$1"
+  },
+  {
+    "f": "<p>(<svg [^>]+>)</p>",
+    "r": "$1"
+  },
+  {
+    "f": "<p>(<image [^>]+>)",
+    "r": "$1"
+  },
+  {
+    "f": "(<image [^>]+>)</p>",
+    "r": "$1"
+  },
+  {
+    "f": "<p>(</svg>)",
+    "r": "$1"
+  },
+  {
+    "f": "(</svg>)</p>",
+    "r": "$1"
+  },
+  {
+    "f": "<p></p>",
+    "r": ""
+  }
+]
