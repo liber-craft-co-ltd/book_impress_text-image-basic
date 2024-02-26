@@ -25,6 +25,9 @@ lang: 'ja'
 <!-- similarweb
 https://www.similarweb.com/blog/insights/ai-news/chatgpt-birthday/
  -->
+<!-- ChatGPT is fastest app to hit 100m users in history
+https://businessday.ng/technology/article/chatgpt-is-fastest-app-to-hit-100m-users-in-history/
+ -->
 <p>
 図X-X ChatGPTと類似サイトへのアクセス数推移
 </p>
